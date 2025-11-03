@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Order Confirmation - Crave Bite{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('cart') }}">Cart</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('checkout') }}">Checkout</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('process_checkout') }}">Confirmation</a></li>
+{% endblock %}
+
+{% block content %}
+<section class="confirmation-section">
+    <div class="container">
+        <div class="confirmation-container">
+            <div class="confirmation-icon">
+                <span>✓</span>
+            </div>
+            <h2>Order Confirmed!</h2>
+            <p>Thank you for your order. We're preparing your delicious meal now.</p>
+            
+            {% if payment_status %}
+            <div class="payment-details">
+                <h3>Payment Information</h3>
+                <p><strong>Payment Status:</strong> {{ payment_status }}</p>
+                {% if name %}
+                <p><strong>Name:</strong> {{ name }}</p>
+                {% endif %}
+                {% if email %}
+                <p><strong>Email:</strong> {{ email }}</p>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <div class="order-details">
+                <h3>Order Details</h3>
+                <div class="order-info">
+                    <p><strong>Order Number:</strong> #{{ order_id or 'FC-' + range(1000, 9999) | random }}</p>
+                    <p><strong>Estimated Delivery:</strong> 30-45 minutes</p>
+                    <p><strong>Delivery Address:</strong> {{ request.form.address if request.form.address else 'Your registered address' }}</p>
+                    <p><strong>Order Status:</strong> <span class="status confirmed">Confirmed</span></p>
+                </div>
+                <div class="order-total">
+                    <span>Total:</span>
+                    <span id="order-total">₹{{ "%.2f"|format(order.total if order else 1500.00) }}</span>
+                </div>
+            </div>
+            
+            <div class="tracking-info">
+                <h3>Track Your Order</h3>
+                <p>You can track your order status in real-time using our order tracking system.</p>
+                <a href="{{ url_for('order_tracking') }}" class="btn">Track Your Order</a>
+            </div>
+            
+            <div class="confirmation-actions">
+                <a href="{{ url_for('restaurants') }}" class="btn">Order More</a>
+                <a href="{{ url_for('index') }}" class="btn secondary">Back to Home</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.status {
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.status.confirmed {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.payment-details {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.payment-details h3 {
+    color: #0a3d2f;
+    margin-bottom: 1rem;
+}
+
+.payment-details p {
+    margin-bottom: 0.5rem;
+}
+</style>
+{% endblock %}

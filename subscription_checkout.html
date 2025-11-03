@@ -1,0 +1,904 @@
+{% extends "base.html" %}
+
+{% block title %}Subscription Checkout - Crave Bite{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('subscription') }}">Subscription</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('subscription_checkout') }}">Checkout</a></li>
+{% endblock %}
+
+{% block content %}
+<section class="subscription-checkout-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Complete Your Subscription</h2>
+            <p>Review your selected plan and proceed to payment</p>
+        </div>
+        
+        <div class="checkout-layout">
+            <div class="checkout-form-container">
+                <form id="subscription-checkout-form" class="checkout-form" method="POST" action="{{ url_for('process_subscription_checkout') }}">
+                    <div class="form-section">
+                        <h3>Customer Information</h3>
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address">Delivery Address</label>
+                            <textarea id="address" name="address" rows="3" required></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section" id="meal-selection-section" style="display: none;">
+                        <h3>Select Your Preferences</h3>
+                        <p class="meal-instructions">Customize your subscription preferences. You can modify these later.</p>
+                        <div id="meal-selection-container">
+                            <!-- Preferences will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>Payment Information</h3>
+                        <div class="form-group">
+                            <label for="payment">Payment Method</label>
+                            <select id="payment" name="payment" required>
+                                <option value="">Select Payment Method</option>
+                                <option value="razorpay">Razorpay (Recommended)</option>
+                                <option value="credit">Credit Card</option>
+                                <option value="debit">Debit Card</option>
+                                <option value="cash">Cash on Delivery</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Razorpay payment button (hidden by default) -->
+                        <div class="payment-details" id="razorpay-details" style="display: none; text-align: center; margin-top: 20px;">
+                            <button type="button" id="razorpay-btn" class="btn" style="background-color: #006400; color: white;"> <!-- Changed to dark green -->
+                                Pay with Razorpay
+                            </button>
+                            <input type="hidden" id="razorpay_order_id" name="razorpay_order_id">
+                            <input type="hidden" id="razorpay_payment_id" name="razorpay_payment_id">
+                            <input type="hidden" id="razorpay_signature" name="razorpay_signature">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="terms" required>
+                            I agree to the <a href="#" target="_blank">Terms and Conditions</a> and <a href="#" target="_blank">Privacy Policy</a>
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn checkout-btn">Complete Subscription</button>
+                </form>
+            </div>
+            
+            <div class="checkout-sidebar">
+                <div class="subscription-summary">
+                    <h3>Subscription Summary</h3>
+                    <div id="subscriptionSummary">
+                        <p class="loading">Loading subscription details...</p>
+                    </div>
+                </div>
+                
+                <div class="support-info">
+                    <h3>Need Help?</h3>
+                    <p>Contact our customer support team:</p>
+                    <p>📞 +1 (555) 123-4567</p>
+                    <p>✉️ support@cravebite.com</p>
+                    <p>Available 24/7</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Razorpay Checkout Script -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get plan from URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const planId = urlParams.get('plan');
+    
+    if (!planId) {
+        alert('No subscription plan selected. Please go back and select a plan.');
+        window.location.href = '/subscription';
+        return;
+    }
+    
+    // Load plan data
+    fetch('/api/subscription_plan/' + planId)
+        .then(response => response.json())
+        .then(planData => {
+            // Store in session storage
+            const subscriptionData = {
+                plan: planId,
+                planData: planData,
+                meals: {},
+                total: 0
+            };
+            sessionStorage.setItem('subscriptionData', JSON.stringify(subscriptionData));
+            
+            // Display subscription summary
+            displaySubscriptionSummary(subscriptionData);
+            
+            // Load menu items for meal selection
+            loadMenuItems(planData);
+        })
+        .catch(error => {
+            console.error('Error loading plan data:', error);
+            // Fallback to basic plan data if API fails
+            const fallbackPlanData = {
+                name: "Selected Plan",
+                description: "Subscription plan",
+                price: 0,
+                meals_period: "month",
+                meals_count: 3
+            };
+            const subscriptionData = {
+                plan: planId,
+                planData: fallbackPlanData,
+                meals: {},
+                total: 0
+            };
+            sessionStorage.setItem('subscriptionData', JSON.stringify(subscriptionData));
+            displaySubscriptionSummary(subscriptionData);
+            loadMenuItems(fallbackPlanData);
+        });
+    
+    // Payment method selection
+    const paymentSelect = document.getElementById('payment');
+    const razorpayDetails = document.getElementById('razorpay-details');
+    
+    paymentSelect.addEventListener('change', function() {
+        razorpayDetails.style.display = this.value === 'razorpay' ? 'block' : 'none';
+    });
+    
+    // Razorpay payment handler
+    const razorpayBtn = document.getElementById('razorpay-btn');
+    if (razorpayBtn) {
+        razorpayBtn.addEventListener('click', function() {
+            const subscriptionData = JSON.parse(sessionStorage.getItem('subscriptionData'));
+            if (subscriptionData) {
+                processRazorpayPayment(subscriptionData);
+            }
+        });
+    }
+    
+    // Form submission
+    const checkoutForm = document.getElementById('subscription-checkout-form');
+    if (checkoutForm) {
+        checkoutForm.addEventListener('submit', function(e) {
+            // Save selected meals to form
+            saveSelectedMeals();
+            
+            const paymentMethod = document.getElementById('payment').value;
+            
+            // If Razorpay is selected and we have payment details, let Razorpay handle it
+            if (paymentMethod === 'razorpay' && document.getElementById('razorpay_payment_id').value) {
+                // Allow form submission to proceed
+                return;
+            }
+            
+            // If Razorpay is selected but no payment details, prevent submission
+            if (paymentMethod === 'razorpay' && !document.getElementById('razorpay_payment_id').value) {
+                e.preventDefault();
+                alert('Please complete the Razorpay payment before submitting the subscription.');
+                return;
+            }
+        });
+    }
+});
+
+function loadMenuItems(planData) {
+    // For weekly plans, show preference selection
+    // For monthly/yearly plans, use smart selection to save user time
+    if (planData.meals_period === 'week') {
+        // Hide meal selection section
+        document.getElementById('meal-selection-section').style.display = 'none';
+        
+        // Show smart plan explanation
+        const smartPlanInfo = document.createElement('div');
+        smartPlanInfo.className = 'smart-plan-info';
+        smartPlanInfo.innerHTML = `
+            <div class="info-box">
+                <h4>Smart Subscription Plan</h4>
+                <p>For your ${planData.meals_period} plan, we'll automatically provide you with a curated selection based on your preferences for the duration of your plan.</p>
+                <p>You can customize your preferences below, and we'll ensure you receive a balanced and exciting selection throughout your subscription.</p>
+                <div class="preferences-section">
+                    <h5>Your Preferences</h5>
+                    <div class="preference-group">
+                        <label>
+                            <input type="checkbox" name="preference" value="vegetarian"> 
+                            Vegetarian Options
+                        </label>
+                        <label>
+                            <input type="checkbox" name="preference" value="low-carb"> 
+                            Low Carb Meals
+                        </label>
+                        <label>
+                            <input type="checkbox" name="preference" value="spicy"> 
+                            Spicy Dishes
+                        </label>
+                        <label>
+                            <input type="checkbox" name="preference" value="seafood"> 
+                            Seafood Options
+                        </label>
+                        <label>
+                            <input type="checkbox" name="preference" value="desserts"> 
+                            Include Desserts
+                        </label>
+                    </div>
+                    <div class="preference-group">
+                        <label for="cuisine-preference">Preferred Cuisines:</label>
+                        <select id="cuisine-preference" name="cuisine-preference">
+                            <option value="any">Any Cuisine</option>
+                            <option value="italian">Italian</option>
+                            <option value="indian">Indian</option>
+                            <option value="mexican">Mexican</option>
+                            <option value="asian">Asian</option>
+                            <option value="mediterranean">Mediterranean</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Insert before the payment section
+        const paymentSection = document.querySelector('.form-section:nth-child(3)');
+        paymentSection.parentNode.insertBefore(smartPlanInfo, paymentSection);
+        
+        // Add hidden input to store smart plan preferences
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'smart_plan_preferences';
+        hiddenInput.id = 'smart_plan_preferences';
+        document.getElementById('subscription-checkout-form').appendChild(hiddenInput);
+        
+        // Add event listeners for preference changes
+        document.querySelectorAll('input[name="preference"], #cuisine-preference').forEach(element => {
+            element.addEventListener('change', updateSmartPlanPreferences);
+        });
+    } else {
+        // For monthly/yearly plans, hide manual selection and show smart plan info
+        document.getElementById('meal-selection-section').style.display = 'none';
+        
+        // Show smart plan explanation
+        const smartPlanInfo = document.createElement('div');
+        smartPlanInfo.className = 'smart-plan-info';
+        smartPlanInfo.innerHTML = `
+            <div class="info-box">
+                <h4>Smart Subscription Plan</h4>
+                <p>For your ${planData.meals_period} plan, we'll automatically provide you with a curated selection based on your preferences for the duration of your plan.</p>
+                <p>You can customize your preferences below, and we'll ensure you receive a balanced and exciting selection throughout your subscription.</p>
+                <div class="preferences-section">
+                    <h5>Your Preferences</h5>
+                    <div class="preference-group">
+                        <label>
+                            <input type="checkbox" name="preference" value="vegetarian"> 
+                            Vegetarian Options
+                        </label>
+                        <label>
+                            <input type="checkbox" name="preference" value="low-carb"> 
+                            Low Carb Meals
+                        </label>
+                        <label>
+                            <input type="checkbox" name="preference" value="spicy"> 
+                            Spicy Dishes
+                        </label>
+                        <label>
+                            <input type="checkbox" name="preference" value="seafood"> 
+                            Seafood Options
+                        </label>
+                        <label>
+                            <input type="checkbox" name="preference" value="desserts"> 
+                            Include Desserts
+                        </label>
+                    </div>
+                    <div class="preference-group">
+                        <label for="cuisine-preference">Preferred Cuisines:</label>
+                        <select id="cuisine-preference" name="cuisine-preference">
+                            <option value="any">Any Cuisine</option>
+                            <option value="italian">Italian</option>
+                            <option value="indian">Indian</option>
+                            <option value="mexican">Mexican</option>
+                            <option value="asian">Asian</option>
+                            <option value="mediterranean">Mediterranean</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Insert before the payment section
+        const paymentSection = document.querySelector('.form-section:nth-child(3)');
+        paymentSection.parentNode.insertBefore(smartPlanInfo, paymentSection);
+        
+        // Add hidden input to store smart plan preferences
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'smart_plan_preferences';
+        hiddenInput.id = 'smart_plan_preferences';
+        document.getElementById('subscription-checkout-form').appendChild(hiddenInput);
+        
+        // Add event listeners for preference changes
+        document.querySelectorAll('input[name="preference"], #cuisine-preference').forEach(element => {
+            element.addEventListener('change', updateSmartPlanPreferences);
+        });
+    }
+}
+
+function updateSmartPlanPreferences() {
+    // Collect all preferences
+    const preferences = {
+        dietary: [],
+        cuisine: document.getElementById('cuisine-preference').value
+    };
+    
+    document.querySelectorAll('input[name="preference"]:checked').forEach(checkbox => {
+        preferences.dietary.push(checkbox.value);
+    });
+    
+    // Store in hidden input as JSON
+    document.getElementById('smart_plan_preferences').value = JSON.stringify(preferences);
+}
+
+function createMealSelectionInterface(menuItems, mealsCount) {
+    const container = document.getElementById('meal-selection-container');
+    
+    // Create preference selection interface
+    let html = `
+        <div class="preference-selection">
+            <p>Our system will automatically select items based on your preferences.</p>
+        </div>
+    `;
+    
+    container.innerHTML = html;
+}
+
+function saveSelectedMeals() {
+    const subscriptionData = JSON.parse(sessionStorage.getItem('subscriptionData')) || {};
+    subscriptionData.meals = {};
+    
+    // Collect selected meals
+    const mealGroups = document.querySelectorAll('.meal-selection-group');
+    mealGroups.forEach((group, index) => {
+        const selectedMeal = group.querySelector('input[type="radio"]:checked');
+        if (selectedMeal) {
+            subscriptionData.meals[`meal-${index + 1}`] = {
+                id: selectedMeal.value,
+                name: selectedMeal.dataset.name,
+                price: parseFloat(selectedMeal.dataset.price)
+            };
+        }
+    });
+    
+    sessionStorage.setItem('subscriptionData', JSON.stringify(subscriptionData));
+}
+
+function displaySubscriptionSummary(data) {
+    const summaryDiv = document.getElementById('subscriptionSummary');
+    
+    // Get preferences from session storage
+    const subscriptionData = JSON.parse(sessionStorage.getItem('subscriptionData')) || {};
+    const preferences = subscriptionData.preferences || {};
+    
+    let preferencesHtml = '';
+    if (Object.keys(preferences).length > 0) {
+        preferencesHtml = '<div class="selected-preferences"><h4>Your Preferences</h4>';
+        if (preferences.dietary && preferences.dietary.length > 0) {
+            preferencesHtml += `<p>Dietary: ${preferences.dietary.join(', ')}</p>`;
+        }
+        if (preferences.cuisine) {
+            preferencesHtml += `<p>Cuisine: ${preferences.cuisine}</p>`;
+        }
+        preferencesHtml += '</div>';
+    } else {
+        preferencesHtml = '<div class="selected-preferences"><h4>Your Preferences</h4><p>No preferences selected yet.</p></div>';
+    }
+    
+    let html = `
+        <div class="plan-info">
+            <h4>${data.planData.name}</h4>
+            <p>${data.planData.description}</p>
+            <div class="plan-price">₹${data.planData.price}/${data.planData.meals_period}</div>
+        </div>
+        
+        ${preferencesHtml}
+        
+        <div class="total-section">
+            <div class="total-row">
+                <span>Plan Price:</span>
+                <span>₹${data.planData.price}</span>
+            </div>
+            <div class="total-row total">
+                <span><strong>Total:</strong></span>
+                <span><strong>₹${data.planData.price}</strong></span>
+            </div>
+        </div>
+    `;
+    
+    summaryDiv.innerHTML = html;
+}
+
+function processRazorpayPayment(subscriptionData) {
+    // Get form data
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+    
+    // Validate required fields
+    if (!name || !email || !phone) {
+        alert('Please fill in all required customer information before proceeding with payment.');
+        return;
+    }
+    
+    // Show loading indicator
+    const razorpayBtn = document.getElementById('razorpay-btn');
+    const originalText = razorpayBtn.innerHTML;
+    razorpayBtn.innerHTML = 'Processing...';
+    razorpayBtn.disabled = true;
+    
+    // Create order data
+    const totalAmount = subscriptionData.planData.price;
+    const orderData = {
+        plan_id: subscriptionData.plan,
+        amount: totalAmount,
+        customer_name: name,
+        customer_email: email
+    };
+    
+    console.log('Sending payment request:', orderData);
+    
+    // Send request to create Razorpay order
+    fetch('/process_subscription_payment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData)
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            return response.json().then(errorData => {
+                throw new Error(`Server error: ${response.status} - ${errorData.error || 'Unknown error'}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Received response:', data);
+        
+        if (data.error) {
+            // Check for specific error types
+            if (data.error.includes('authentication') || data.error.includes('Unauthorized')) {
+                alert('Payment gateway authentication failed. Please contact support. (Authentication Error)');
+            } else if (data.error.includes('Bad Request') || data.error.includes('invalid')) {
+                alert('Invalid payment request. Please check your information and try again. (Bad Request Error)');
+            } else if (data.error.includes('Razorpay not configured') || data.error.includes('not configured')) {
+                alert('Payment gateway is not properly configured. Please contact support.');
+            } else {
+                alert('Error creating subscription order: ' + data.error);
+            }
+            
+            razorpayBtn.innerHTML = originalText;
+            razorpayBtn.disabled = false;
+            return;
+        }
+        
+        // Validate required Razorpay data
+        if (!data.key_id || !data.order_id || !data.amount || !data.currency) {
+            alert('Invalid payment data received from server. Please try again.');
+            razorpayBtn.innerHTML = originalText;
+            razorpayBtn.disabled = false;
+            return;
+        }
+        
+        // Create Razorpay options
+        var options = {
+            "key": data.key_id,
+            "amount": data.amount,
+            "currency": data.currency,
+            "name": "Crave Bite",
+            "description": `${subscriptionData.planData.name} Subscription`,
+            "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzAwNjQwMCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgaDEwLTQuNDggMTAtMTAgtNC40OC0xMC0xMHoiLz48cGF0aCBkPSJNMTIgNmMtMy4zMSIDAtNiAyLjY5LTYgNnMyLjY5IDYgNiA2IDYtMi42OSA2LTYtMi42OS02LTYtNnoiLz48L3N2Zz4=",
+            "order_id": data.order_id,
+            "handler": function (response){
+                console.log('Payment successful:', response);
+                // Payment successful
+                document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
+                document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+                document.getElementById('razorpay_signature').value = response.razorpay_signature;
+                
+                // Submit the form to process the subscription
+                document.getElementById('subscription-checkout-form').submit();
+            },
+            "prefill": {
+                "name": name,
+                "email": email,
+                "contact": phone
+            },
+            "notes": {
+                "address": document.getElementById('address').value,
+                "plan": subscriptionData.planData.name
+            },
+            "theme": {
+                "color": "#006400" // Changed to dark green
+            },
+            "modal": {
+                "ondismiss": function(){
+                    // Re-enable button when modal is closed
+                    console.log('Payment modal dismissed');
+                    razorpayBtn.innerHTML = originalText;
+                    razorpayBtn.disabled = false;
+                    alert("Payment cancelled. You can try again when ready.");
+                }
+            }
+        };
+        
+        console.log('Opening Razorpay with options:', options);
+        
+        // Open Razorpay checkout
+        try {
+            var rzp = new Razorpay(options);
+            rzp.on('payment.failed', function (response){
+                console.log('Payment failed:', response);
+                razorpayBtn.innerHTML = originalText;
+                razorpayBtn.disabled = false;
+                if (response.error && response.error.description) {
+                    alert('Payment failed: ' + response.error.description);
+                } else {
+                    alert('Payment failed: Unknown error occurred');
+                }
+            });
+            rzp.open();
+        } catch (e) {
+            console.error('Error opening Razorpay:', e);
+            alert('Error opening payment gateway. Please try again. (' + e.message + ')');
+            razorpayBtn.innerHTML = originalText;
+            razorpayBtn.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error creating subscription order. Please try again. (' + error.message + ')');
+        razorpayBtn.innerHTML = originalText;
+        razorpayBtn.disabled = false;
+    });
+}
+
+// Update summary when meals are selected
+document.addEventListener('change', function(e) {
+    if (e.target.name && e.target.name.startsWith('meal-')) {
+        // Save selected meals and update summary
+        saveSelectedMeals();
+        const subscriptionData = JSON.parse(sessionStorage.getItem('subscriptionData')) || {};
+        displaySubscriptionSummary(subscriptionData);
+    }
+});
+</script>
+
+<style>
+.subscription-checkout-section {
+    padding: 40px 0;
+}
+
+.checkout-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+    margin-top: 30px;
+}
+
+.checkout-form-container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.form-section {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.form-section h3 {
+    color: #006400; /* Changed to dark green */
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.meal-instructions {
+    color: #666;
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+.meal-selection-group {
+    margin-bottom: 25px;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
+
+.meal-selection-group h4 {
+    margin-top: 0;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.meal-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.meal-option {
+    position: relative;
+}
+
+.meal-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+}
+
+.meal-option label {
+    display: block;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: white;
+}
+
+.meal-option input[type="radio"]:checked + label {
+    border-color: #006400; /* Changed to dark green */
+    background: #e6f3e6;
+    box-shadow: 0 0 0 3px rgba(0, 100, 0, 0.1); /* Changed to dark green */
+}
+
+.meal-option label:hover {
+    border-color: #006400; /* Changed to dark green */
+    background: #f0f0f0;
+}
+
+.meal-info .meal-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.meal-info .meal-description {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.4;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #006400; /* Changed to dark green */
+    box-shadow: 0 0 0 3px rgba(0, 100, 0, 0.1); /* Changed to dark green */
+}
+
+.checkout-btn {
+    width: 100%;
+    background: #006400; /* Changed to dark green */
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.checkout-btn:hover {
+    background: #004d00; /* Darker green for hover */
+    transform: translateY(-2px);
+}
+
+.info-box {
+    background: #e8f5e9;
+    border: 1px solid #c8e6c9;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.info-box h4 {
+    color: #006400;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.info-box p {
+    color: #333;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.preferences-section {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #c8e6c9;
+}
+
+.preferences-section h5 {
+    color: #006400;
+    margin-bottom: 15px;
+}
+
+.preference-group {
+    margin-bottom: 15px;
+}
+
+.preference-group label {
+    display: inline-block;
+    margin-right: 20px;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.preference-group input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+.preference-group select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.checkout-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.subscription-summary {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.subscription-summary h3 {
+    color: #006400; /* Changed to dark green */
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.plan-info {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.plan-price {
+    font-size: 24px;
+    font-weight: bold;
+    color: #006400; /* Changed to dark green */
+    margin-top: 10px;
+}
+
+.selected-meals {
+    margin-bottom: 20px;
+}
+
+.selected-meals h4 {
+    margin-top: 0;
+    color: #333;
+}
+
+.selected-meals p {
+    margin: 8px 0;
+    color: #666;
+    padding: 8px;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+.total-section {
+    border-top: 2px solid #eee;
+    padding-top: 15px;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    padding: 5px 0;
+}
+
+.total-row.total {
+    font-size: 18px;
+    font-weight: bold;
+    color: #006400; /* Changed to dark green */
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+    margin-top: 15px;
+}
+
+.support-info {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.support-info h3 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.support-info p {
+    margin: 8px 0;
+    color: #666;
+}
+
+.loading {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .checkout-layout {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .checkout-form-container {
+        padding: 20px;
+    }
+    
+    .meal-options {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

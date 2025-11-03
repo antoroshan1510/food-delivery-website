@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us - Crave Bite{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('contact') }}">Contact</a></li>
+{% endblock %}
+
+{% block content %}
+<section class="contact-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Contact Us</h2>
+            <p>We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+        </div>
+        
+        <div class="contact-layout">
+            <div class="contact-info">
+                <h3>Get In Touch</h3>
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <h4>📍 Address</h4>
+                        <p>123 Food Street, Culinary District<br>New York, NY 10001</p>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <h4>📞 Phone</h4>
+                        <p>+1 (555) 123-4567</p>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <h4>✉️ Email</h4>
+                        <p>info@foodcarve.com</p>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <h4>🕒 Hours</h4>
+                        <p>Monday - Friday: 9:00 AM - 9:00 PM<br>
+                        Saturday - Sunday: 10:00 AM - 10:00 PM</p>
+                    </div>
+                </div>
+                
+                <div class="map-container">
+                    <div class="map-placeholder">
+                        <p>Map Location</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="contact-form-container">
+                <h3>Send Us a Message</h3>
+                <form class="contact-form">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" name="subject" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" rows="5" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="faq-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Frequently Asked Questions</h2>
+            <p>Find answers to common questions about our service</p>
+        </div>
+        
+        <div class="faq-container">
+            <div class="faq-item">
+                <h4>How long does delivery take?</h4>
+                <p>Our standard delivery time is 30-45 minutes. During peak hours, it may take slightly longer.</p>
+            </div>
+            
+            <div class="faq-item">
+                <h4>Do you offer vegetarian/vegan options?</h4>
+                <p>Yes, we have a wide selection of vegetarian and vegan dishes clearly marked on our menu.</p>
+            </div>
+            
+            <div class="faq-item">
+                <h4>Can I customize my order?</h4>
+                <p>Absolutely! You can add special instructions during checkout for any dietary restrictions or preferences.</p>
+            </div>
+            
+            <div class="faq-item">
+                <h4>What payment methods do you accept?</h4>
+                <p>We accept all major credit cards, PayPal, and Apple Pay.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

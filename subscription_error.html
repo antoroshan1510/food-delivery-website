@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}Subscription Error - Crave Bite{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('subscription') }}">Subscription</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('subscription_checkout') }}">Checkout</a></li>
+<li class="breadcrumb-item">Error</li>
+{% endblock %}
+
+{% block content %}
+<section class="subscription-error-section">
+    <div class="container">
+        <div class="error-content">
+            <div class="error-icon">
+                <span>!</span>
+            </div>
+            <h1>Subscription Processing Error</h1>
+            <p>Sorry, there was an error processing your subscription. Please try again.</p>
+            
+            {% if error %}
+            <div class="error-details">
+                <h2>Error Details</h2>
+                <p>{{ error }}</p>
+            </div>
+            {% endif %}
+            
+            <div class="actions">
+                <a href="{{ url_for('subscription') }}" class="btn btn-primary">Try Again</a>
+                <a href="{{ url_for('contact') }}" class="btn btn-secondary">Contact Support</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.subscription-error-section {
+    padding: 60px 0;
+    background: #f8f9fa;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+}
+
+.error-content {
+    background: white;
+    padding: 50px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.error-icon {
+    width: 80px;
+    height: 80px;
+    background: #f44336; /* Red */
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 0 auto 30px;
+}
+
+.error-content h1 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+}
+
+.error-content p {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 40px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.error-details {
+    background: #ffebee;
+    padding: 25px;
+    border-radius: 10px;
+    margin-bottom: 40px;
+    text-align: left;
+}
+
+.error-details h2 {
+    color: #f44336; /* Red */
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.error-details p {
+    color: #333;
+    margin: 0;
+    font-family: monospace;
+    word-break: break-all;
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.btn-primary {
+    background: #006400; /* Dark green */
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary:hover {
+    background: #004d00; /* Darker green for hover */
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: #FFD700; /* Gold */
+    color: #333;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-secondary:hover {
+    background: #e6c200; /* Darker gold for hover */
+    transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .error-content {
+        padding: 30px 20px;
+        margin: 20px;
+    }
+    
+    .error-content h1 {
+        font-size: 2rem;
+    }
+    
+    .actions {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .subscription-error-section {
+        padding: 30px 0;
+    }
+    
+    .error-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 2rem;
+    }
+}
+</style>
+{% endblock %}

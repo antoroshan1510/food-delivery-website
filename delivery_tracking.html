@@ -1,0 +1,331 @@
+{% extends "base.html" %}
+
+{% block title %}Delivery Partner Tracking - Crave Bite{% endblock %}
+
+{% block content %}
+<section class="delivery-tracking-section">
+    <div class="container">
+        <div class="section-header">
+            <h1>Delivery Partner Tracking</h1>
+            <p>Update your location for real-time order tracking</p>
+        </div>
+        
+        <div class="tracking-controls">
+            <div class="form-group">
+                <label for="order-id">Order ID</label>
+                <input type="text" id="order-id" placeholder="e.g. FC-12345" value="FC-12345">
+            </div>
+            
+            <div class="form-group">
+                <label for="driver-id">Driver ID</label>
+                <input type="text" id="driver-id" placeholder="e.g. DRV-001" value="DRV-001">
+            </div>
+            
+            <div class="location-controls">
+                <button id="start-tracking" class="btn btn-primary">Start Tracking</button>
+                <button id="stop-tracking" class="btn btn-secondary" disabled>Stop Tracking</button>
+                <button id="send-location" class="btn btn-primary">Send Location Now</button>
+            </div>
+            
+            <div class="status-info">
+                <div class="status-indicator">
+                    <span class="indicator" id="tracking-indicator"></span>
+                    <span class="status-text" id="tracking-status">Not tracking</span>
+                </div>
+                <div class="location-info" id="location-info">
+                    <!-- Location info will be displayed here -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>How to Use</h3>
+            <ol>
+                <li>Enter the Order ID and Driver ID</li>
+                <li>Click "Start Tracking" to begin sending location updates</li>
+                <li>The system will automatically send your location every 5 seconds</li>
+                <li>Customers can track your real-time location on their order tracking page</li>
+                <li>Click "Stop Tracking" when delivery is complete</li>
+            </ol>
+        </div>
+    </div>
+</section>
+
+<script>
+let trackingInterval = null;
+let isTracking = false;
+
+document.addEventListener('DOMContentLoaded', function() {
+    const startTrackingBtn = document.getElementById('start-tracking');
+    const stopTrackingBtn = document.getElementById('stop-tracking');
+    const sendLocationBtn = document.getElementById('send-location');
+    const trackingIndicator = document.getElementById('tracking-indicator');
+    const trackingStatus = document.getElementById('tracking-status');
+    const locationInfo = document.getElementById('location-info');
+    
+    // Start tracking
+    startTrackingBtn.addEventListener('click', function() {
+        const orderId = document.getElementById('order-id').value;
+        const driverId = document.getElementById('driver-id').value;
+        
+        if (!orderId || !driverId) {
+            alert('Please enter both Order ID and Driver ID');
+            return;
+        }
+        
+        isTracking = true;
+        startTrackingBtn.disabled = true;
+        stopTrackingBtn.disabled = false;
+        trackingIndicator.className = 'indicator active';
+        trackingStatus.textContent = 'Tracking active';
+        
+        // Send location immediately
+        sendLocation(orderId, driverId);
+        
+        // Set up interval to send location every 5 seconds
+        trackingInterval = setInterval(() => {
+            sendLocation(orderId, driverId);
+        }, 5000);
+    });
+    
+    // Stop tracking
+    stopTrackingBtn.addEventListener('click', function() {
+        isTracking = false;
+        clearInterval(trackingInterval);
+        startTrackingBtn.disabled = false;
+        stopTrackingBtn.disabled = true;
+        trackingIndicator.className = 'indicator';
+        trackingStatus.textContent = 'Tracking stopped';
+    });
+    
+    // Send location manually
+    sendLocationBtn.addEventListener('click', function() {
+        const orderId = document.getElementById('order-id').value;
+        const driverId = document.getElementById('driver-id').value;
+        
+        if (!orderId || !driverId) {
+            alert('Please enter both Order ID and Driver ID');
+            return;
+        }
+        
+        sendLocation(orderId, driverId);
+    });
+    
+    // Function to send location to server
+    function sendLocation(orderId, driverId) {
+        // In a real app, this would use the device's GPS
+        // For simulation, we'll generate random coordinates near the delivery address
+        const baseLat = 40.7128; // New York City latitude
+        const baseLng = -74.0060; // New York City longitude
+        
+        // Generate random offset to simulate movement
+        const latOffset = (Math.random() - 0.5) * 0.01;
+        const lngOffset = (Math.random() - 0.5) * 0.01;
+        
+        const latitude = baseLat + latOffset;
+        const longitude = baseLng + lngOffset;
+        
+        // Update UI with current location
+        locationInfo.innerHTML = `
+            <p><strong>Current Location:</strong></p>
+            <p>Latitude: ${latitude.toFixed(6)}</p>
+            <p>Longitude: ${longitude.toFixed(6)}</p>
+            <p>Time: ${new Date().toLocaleTimeString()}</p>
+        `;
+        
+        // Send location to server
+        fetch('/api/driver/location', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                order_id: orderId,
+                driver_id: driverId,
+                latitude: latitude,
+                longitude: longitude
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Location update response:', data);
+            if (data.status === 'error') {
+                console.error('Error updating location:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error sending location:', error);
+        });
+    }
+});
+</script>
+
+<style>
+.delivery-tracking-section {
+    padding: 40px 0;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.section-header h1 {
+    color: #0a3d2f;
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+.section-header p {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.tracking-controls {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+}
+
+.form-group input:focus {
+    border-color: #0a3d2f;
+}
+
+.location-controls {
+    display: flex;
+    gap: 15px;
+    margin: 30px 0;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.btn-primary {
+    background: #0a3d2f;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #146b52;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+.status-info {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #dc3545;
+    margin-right: 10px;
+}
+
+.indicator.active {
+    background: #28a745;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+    }
+}
+
+.status-text {
+    font-weight: 600;
+    color: #333;
+}
+
+.location-info p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.instructions {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.instructions h3 {
+    color: #0a3d2f;
+    margin-bottom: 20px;
+}
+
+.instructions ol {
+    padding-left: 20px;
+}
+
+.instructions li {
+    margin-bottom: 15px;
+    line-height: 1.6;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    .location-controls {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Crave Bite - Delicious Food Delivery{% endblock %}</title>
+    <meta name="description" content="Crave Bite - Delicious food delivered to your doorstep. Order from our wide selection of restaurants and dishes with fast delivery service. Fresh, quality meals prepared by top chefs.">
+    <meta name="keywords" content="food delivery, online food ordering, restaurant delivery, meal subscription, crave bite, fresh food, fast delivery, indian food, italian food, chinese food, american food">
+    <meta name="author" content="Crave Bite">
+    <meta name="robots" content="index, follow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Restaurant",
+        "name": "Crave Bite",
+        "description": "Delicious food delivered to your doorstep with fast delivery service",
+        "url": "{{ request.url_root }}",
+        "telephone": "+1 (555) 123-4567",
+        "email": "info@cravebite.com",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "123 Food Street",
+            "addressLocality": "New York",
+            "addressRegion": "NY",
+            "postalCode": "10001",
+            "addressCountry": "US"
+        },
+        "openingHours": "Mo-Su 09:00-21:00",
+        "servesCuisine": ["Indian", "Italian", "American", "Chinese"],
+        "priceRange": "$$",
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "reviewCount": "1250"
+        }
+    }
+    </script>
+    
+    <!-- Open Graph Meta Tags for Social Media -->
+    <meta property="og:title" content="Crave Bite - Delicious Food Delivery">
+    <meta property="og:description" content="Order delicious food delivered to your doorstep with fast delivery service. Fresh, quality meals prepared by top chefs.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.url_root }}">
+    <meta property="og:image" content="{{ url_for('static', filename='images/og-image.jpg') }}">
+    <meta property="og:site_name" content="Crave Bite">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Crave Bite - Delicious Food Delivery">
+    <meta name="twitter:description" content="Order delicious food delivered to your doorstep with fast delivery service. Fresh, quality meals prepared by top chefs.">
+    <meta name="twitter:image" content="{{ url_for('static', filename='images/og-image.jpg') }}">
+    <meta name="twitter:site" content="@cravebite">
+    
+    <style>
+        /* Flash Messages */
+        .flash-messages {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            width: 300px;
+        }
+        
+        .flash-message {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            animation: fadeInOut 5s ease-in-out;
+        }
+        
+        .flash-success {
+            background-color: #27ae60;
+        }
+        
+        .flash-error {
+            background-color: #e74c3c;
+        }
+        
+        .flash-info {
+            background-color: #3498db;
+        }
+        
+        .flash-warning {
+            background-color: #f39c12;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(-20px); }
+            10% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+        
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+        
+        .back-to-top:hover {
+            background-color: #2980b9;
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar" role="navigation" aria-label="Main navigation">
+            <div class="nav-container">
+                <h1 class="nav-logo">Crave Bite</h1>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle mobile menu" aria-expanded="false" aria-controls="nav-menu">☰</button>
+                <div class="nav-search">
+                    <label for="nav-search-input" class="sr-only">Search restaurants</label>
+                    <input type="text" id="nav-search-input" placeholder="Search restaurants..." aria-label="Search restaurants" aria-autocomplete="list">
+                    <button id="nav-search-btn" aria-label="Search">🔍</button>
+                </div>
+                <ul class="nav-menu" role="menubar" id="nav-menu" aria-hidden="true">
+                    <li class="nav-item" role="none">
+                        <a href="{{ url_for('index') }}" class="nav-link" role="menuitem" tabindex="-1">Home</a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="{{ url_for('restaurants') }}" class="nav-link" role="menuitem" tabindex="-1">Restaurants</a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="{{ url_for('subscription') }}" class="nav-link" role="menuitem" tabindex="-1">Subscription</a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="{{ url_for('kids_subscription') }}" class="nav-link" role="menuitem" tabindex="-1">Kids Subscription</a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="{{ url_for('donate') }}" class="nav-link" role="menuitem" tabindex="-1">Donate</a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="{{ url_for('contact') }}" class="nav-link" role="menuitem" tabindex="-1">Contact</a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="{{ url_for('about') }}" class="nav-link" role="menuitem" tabindex="-1">About Us</a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="{{ url_for('order_tracking') }}" class="nav-link" role="menuitem" tabindex="-1">Track Order</a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="{{ url_for('cart') }}" class="nav-link cart-link" role="menuitem" tabindex="-1">
+                            <img src="{{ url_for('static', filename='images/cart-icon.svg') }}" alt="Cart" class="cart-icon">
+                            <span class="cart-indicator" style="display: none;" aria-label="Cart items count">0</span>
+                        </a>
+                    </li>
+                    {% if session.username %}
+                    <!-- Role-based dashboard links -->
+                    {% if session.role == 'admin' %}
+                    <li class="nav-item" role="none">
+                        <a href="{{ url_for('admin_dashboard') }}" class="nav-link" role="menuitem" tabindex="-1">Admin Dashboard</a>
+                    </li>
+                    {% elif session.role == 'owner' %}
+                    <li class="nav-item" role="none">
+                        <a href="{{ url_for('owner_dashboard') }}" class="nav-link" role="menuitem" tabindex="-1">Owner Dashboard</a>
+                    </li>
+                    {% elif session.role == 'delivery' %}
+                    <li class="nav-item" role="none">
+                        <a href="{{ url_for('delivery_dashboard') }}" class="nav-link" role="menuitem" tabindex="-1">Delivery Dashboard</a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="{{ url_for('delivery_tracking') }}" class="nav-link" role="menuitem" tabindex="-1">Delivery Tracking</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item" role="none">
+                        <a href="{{ url_for('profile') }}" class="nav-link" role="menuitem" tabindex="-1">My Profile</a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item" role="none">
+                        <a href="{{ url_for('logout') }}" class="nav-link" role="menuitem" tabindex="-1">Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item" role="none">
+                        <a href="{{ url_for('login') }}" class="nav-link" role="menuitem" tabindex="-1">Login</a>
+                    </li>
+                    <li class="nav-item" role="none">
+                        <a href="{{ url_for('signup') }}" class="nav-link" role="menuitem" tabindex="-1">Sign Up</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Breadcrumb Navigation -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+        <div class="breadcrumb-container">
+            <ul class="breadcrumb-list">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}" aria-current="page">Home</a></li>
+                {% block breadcrumb %}{% endblock %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner" style="display: none;" role="status" aria-live="polite">
+        <div class="spinner" aria-hidden="true"></div>
+        <p>Loading...</p>
+    </div>
+
+    <main>
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer role="contentinfo">
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>Crave Bite</h3>
+                <p>Delivering delicious meals to your doorstep with a commitment to quality and sustainability.</p>
+                <div class="social-icons">
+                    <a href="https://facebook.com/cravebite" class="social-icon" target="_blank" rel="noopener" aria-label="Facebook">
+                        <span aria-hidden="true">📘</span>
+                        <span class="sr-only">Facebook</span>
+                    </a>
+                    <a href="https://twitter.com/cravebite" class="social-icon" target="_blank" rel="noopener" aria-label="Twitter">
+                        <span aria-hidden="true">🐦</span>
+                        <span class="sr-only">Twitter</span>
+                    </a>
+                    <a href="https://linkedin.com/company/cravebite" class="social-icon" target="_blank" rel="noopener" aria-label="LinkedIn">
+                        <span aria-hidden="true">💼</span>
+                        <span class="sr-only">LinkedIn</span>
+                    </a>
+                    <a href="https://instagram.com/cravebite" class="social-icon" target="_blank" rel="noopener" aria-label="Instagram">
+                        <span aria-hidden="true">📷</span>
+                        <span class="sr-only">Instagram</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Home</a></li>
+                    <li><a href="{{ url_for('restaurants') }}">Restaurants</a></li>
+                    <li><a href="{{ url_for('subscription') }}">Subscription</a></li>
+                    <li><a href="{{ url_for('kids_subscription') }}">Kids Subscription</a></li>
+                    <li><a href="{{ url_for('donate') }}">Donate</a></li>
+                    <li><a href="{{ url_for('about') }}">About Us</a></li>
+                    <li><a href="{{ url_for('contact') }}">Contact Us</a></li>
+                    <li><a href="{{ url_for('order_tracking') }}">Track Order</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Customer Service</h3>
+                <ul>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Shipping Policy</a></li>
+                    <li><a href="#">Returns & Refunds</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Contact Info</h3>
+                <ul>
+                    <li><span aria-hidden="true">📞</span> <span class="sr-only">Phone:</span> +1 (555) 123-4567</li>
+                    <li><span aria-hidden="true">✉️</span> <span class="sr-only">Email:</span> info@cravebite.com</li>
+                    <li><span aria-hidden="true">📍</span> <span class="sr-only">Address:</span> 123 Food Street, NY 10001</li>
+                    <li><span aria-hidden="true">🕒</span> <span class="sr-only">Hours:</span> Mon-Sun: 9AM-9PM</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2025 Crave Bite. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" aria-label="Back to top">↑</button>
+
+    <!-- AI Chatbot -->
+    <div class="chatbot-container">
+        <div class="chatbot-header">
+            <h3>Crave Bite Assistant</h3>
+            <button class="chatbot-toggle" id="chatbotToggle">💬</button>
+        </div>
+        <div class="chatbot-body" id="chatbotBody">
+            <div class="chatbot-messages" id="chatbotMessages">
+                <div class="message bot-message">
+                    Hello! I'm your Crave Bite assistant. How can I help you today?
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbotInput" placeholder="Ask me anything about Crave Bite...">
+                <button id="chatbotSend">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+    <script>
+        // Handle navigation search
+        document.addEventListener('DOMContentLoaded', function() {
+            const navSearchInput = document.getElementById('nav-search-input');
+            const navSearchBtn = document.getElementById('nav-search-btn');
+            
+            if (navSearchInput && navSearchBtn) {
+                // Search on button click
+                navSearchBtn.addEventListener('click', function() {
+                    performSearch(navSearchInput.value);
+                });
+                
+                // Search on Enter key
+                navSearchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        performSearch(navSearchInput.value);
+                    }
+                });
+                
+                // Function to perform search
+                function performSearch(searchTerm) {
+                    if (searchTerm.trim() !== '') {
+                        // Redirect to restaurants page with search query
+                        window.location.href = `/restaurants?search=${encodeURIComponent(searchTerm)}`;
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,368 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile - Crave Bite{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('profile') }}">My Profile</a></li>
+{% endblock %}
+
+{% block content %}
+<section class="profile-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>My Profile</h2>
+            <p>Manage your account information and preferences</p>
+        </div>
+        
+        <div class="profile-layout">
+            <div class="profile-sidebar">
+                <div class="profile-card">
+                    <div class="profile-image">
+                        <div class="image-placeholder">
+                            <span>{{ session.username[0].upper() }}</span>
+                        </div>
+                    </div>
+                    <h3>{{ session.username }}</h3>
+                    <p>{{ user_data.email }}</p>
+                </div>
+                
+                <nav class="profile-nav">
+                    <ul>
+                        <li class="active"><a href="#profile-info">Profile Information</a></li>
+                        <li><a href="#order-history">Order History</a></li>
+                        <li><a href="#addresses">Saved Addresses</a></li>
+                        <li><a href="#favorites">Favorites</a></li>
+                        <li><a href="#subscription">Subscription</a></li>
+                        <li><a href="#preferences">Preferences</a></li>
+                        <li><a href="#security">Security</a></li>
+                    </ul>
+                </nav>
+            </div>
+            
+            <div class="profile-content">
+                <div class="profile-info" id="profile-info">
+                    <h3>Profile Information</h3>
+                    <form class="profile-form" method="POST" action="{{ url_for('update_profile') }}">
+                        <div class="form-group">
+                            <label for="full-name">Full Name</label>
+                            <input type="text" id="full-name" name="full-name" value="{{ session.username }}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" value="{{ user_data.email }}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" placeholder="Enter your phone number">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address">Delivery Address</label>
+                            <textarea id="address" name="address" rows="3" placeholder="Enter your delivery address"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn">Save Changes</button>
+                    </form>
+                </div>
+                
+                <div class="order-history" id="order-history" style="display: none;">
+                    <h3>Order History</h3>
+                    <div class="order-list">
+                        {% if user_orders %}
+                            {% for order in user_orders %}
+                            <div class="order-item">
+                                <div class="order-header">
+                                    <span class="order-id">Order #{{ order.order_id }}</span>
+                                    <span class="order-date">{{ order.order_date }}</span>
+                                    <span class="order-status {{ order.status.replace('-', '') }}">{{ order.status.replace('-', ' ').title() }}</span>
+                                </div>
+                                <div class="order-details">
+                                    <p>{{ order.items|length }} items - Total: ₹{{ "%.2f"|format(order.total) }}</p>
+                                    <p>
+                                        {% for item in order.items[:3] %}
+                                            {{ item.name }}{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                        {% if order.items|length > 3 %}and {{ order.items|length - 3 }} more...{% endif %}
+                                    </p>
+                                </div>
+                                <div class="order-actions">
+                                    <a href="{{ url_for('order_details', order_id=order.order_id) }}" class="btn secondary">View Details</a>
+                                    <button class="btn secondary reorder-btn">Reorder</button>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p>You haven't placed any orders yet. <a href="{{ url_for('restaurants') }}">Start ordering now!</a></p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="addresses" id="addresses" style="display: none;">
+                    <h3>Saved Addresses</h3>
+                    <div class="addresses-list">
+                        <div class="address-card">
+                            <h4>Home</h4>
+                            <p>123 Main St, New York, NY 10001</p>
+                            <p>📞 (555) 123-4567</p>
+                            <div class="address-actions">
+                                <button class="btn secondary edit-address">Edit</button>
+                                <button class="btn danger delete-address">Delete</button>
+                            </div>
+                        </div>
+                        
+                        <div class="address-card">
+                            <h4>Work</h4>
+                            <p>456 Office Blvd, Manhattan, NY 10002</p>
+                            <p>📞 (555) 987-6543</p>
+                            <div class="address-actions">
+                                <button class="btn secondary edit-address">Edit</button>
+                                <button class="btn danger delete-address">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn" id="add-address-btn">Add New Address</button>
+                    
+                    <!-- Add/Edit Address Form (hidden by default) -->
+                    <div class="address-form" id="address-form" style="display: none;">
+                        <h4>Add New Address</h4>
+                        <form>
+                            <div class="form-group">
+                                <label for="address-label">Address Label</label>
+                                <input type="text" id="address-label" name="address-label" placeholder="e.g., Home, Work">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="street-address">Street Address</label>
+                                <input type="text" id="street-address" name="street-address" placeholder="Street address">
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="city">City</label>
+                                    <input type="text" id="city" name="city" placeholder="City">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="state">State</label>
+                                    <input type="text" id="state" name="state" placeholder="State">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="zip">ZIP Code</label>
+                                    <input type="text" id="zip" name="zip" placeholder="ZIP Code">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="phone-number">Phone Number</label>
+                                <input type="tel" id="phone-number" name="phone-number" placeholder="Phone number">
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="submit" class="btn">Save Address</button>
+                                <button type="button" class="btn secondary" id="cancel-address">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="favorites" id="favorites" style="display: none;">
+                    <h3>Favorite Items</h3>
+                    <div class="favorites-list">
+                        <div class="favorite-item">
+                            <div class="item-image">
+                                <div class="image-placeholder">P</div>
+                            </div>
+                            <div class="item-info">
+                                <h4>Margherita Pizza</h4>
+                                <p class="item-price">₹1078.17</p>
+                            </div>
+                            <div class="favorite-actions">
+                                <button class="btn secondary add-to-cart">Add to Cart</button>
+                                <button class="btn danger remove-favorite">Remove</button>
+                            </div>
+                        </div>
+                        
+                        <div class="favorite-item">
+                            <div class="item-image">
+                                <div class="image-placeholder">B</div>
+                            </div>
+                            <div class="item-info">
+                                <h4>Beef Burger</h4>
+                                <p class="item-price">₹995.17</p>
+                            </div>
+                            <div class="favorite-actions">
+                                <button class="btn secondary add-to-cart">Add to Cart</button>
+                                <button class="btn danger remove-favorite">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="subscription-info" id="subscription" style="display: none;">
+                    <h3>Subscription</h3>
+                    <div class="subscription-card">
+                        <h4>Daily Meal Plan - Monthly Subscription</h4>
+                        <p class="subscription-status active">Active</p>
+                        <p>Next billing date: June 1, 2025</p>
+                        <p>Daily meals (Breakfast, Lunch, Dinner) delivered according to your plan</p>
+                        <div class="subscription-actions">
+                            <a href="{{ url_for('subscription') }}" class="btn">Manage Subscription</a>
+                            <a href="#" class="btn secondary">Cancel Subscription</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="preferences" id="preferences" style="display: none;">
+                    <h3>Preferences</h3>
+                    <form class="preferences-form">
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="newsletter" checked>
+                                Subscribe to newsletter
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="promotions">
+                                Receive promotional offers
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="notifications" checked>
+                                Enable order notifications
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Dietary Preferences</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="vegetarian">
+                                    Vegetarian
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="vegan">
+                                    Vegan
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="gluten-free">
+                                    Gluten-Free
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn">Save Preferences</button>
+                    </form>
+                </div>
+                
+                <div class="security" id="security" style="display: none;">
+                    <h3>Security</h3>
+                    <form class="security-form" method="POST" action="{{ url_for('change_password') }}">
+                        <div class="form-group">
+                            <label for="current-password">Current Password</label>
+                            <input type="password" id="current-password" name="current-password" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="new-password">New Password</label>
+                            <input type="password" id="new-password" name="new-password">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirm-password">Confirm New Password</label>
+                            <input type="password" id="confirm-password" name="confirm-password">
+                        </div>
+                        
+                        <button type="submit" class="btn">Update Password</button>
+                    </form>
+                    
+                    <div class="danger-zone">
+                        <h4>Delete Account</h4>
+                        <p>Permanently delete your account and all associated data.</p>
+                        <button class="btn danger">Delete Account</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Profile navigation
+    const navLinks = document.querySelectorAll('.profile-nav a');
+    const sections = document.querySelectorAll('.profile-content > div');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Remove active class from all links and sections
+            navLinks.forEach(l => l.parentElement.classList.remove('active'));
+            sections.forEach(s => s.style.display = 'none');
+            
+            // Add active class to clicked link
+            this.parentElement.classList.add('active');
+            
+            // Show corresponding section
+            const target = this.getAttribute('href');
+            document.querySelector(target).style.display = 'block';
+        });
+    });
+    
+    // Add address button
+    const addAddressBtn = document.getElementById('add-address-btn');
+    const addressForm = document.getElementById('address-form');
+    const cancelAddressBtn = document.getElementById('cancel-address');
+    
+    if (addAddressBtn && addressForm && cancelAddressBtn) {
+        addAddressBtn.addEventListener('click', function() {
+            addressForm.style.display = 'block';
+            addAddressBtn.style.display = 'none';
+        });
+        
+        cancelAddressBtn.addEventListener('click', function() {
+            addressForm.style.display = 'none';
+            addAddressBtn.style.display = 'inline-block';
+        });
+    }
+    
+    // Reorder button functionality
+    const reorderButtons = document.querySelectorAll('.reorder-btn');
+    reorderButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // In a real implementation, this would add the items from the order to the cart
+            alert('Items from this order have been added to your cart!');
+        });
+    });
+    
+    // Add to cart from favorites
+    const addToCartButtons = document.querySelectorAll('.add-to-cart');
+    addToCartButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // In a real implementation, this would add the favorite item to the cart
+            alert('Item added to cart!');
+        });
+    });
+    
+    // Remove favorite
+    const removeFavoriteButtons = document.querySelectorAll('.remove-favorite');
+    removeFavoriteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const favoriteItem = this.closest('.favorite-item');
+            favoriteItem.style.opacity = '0';
+            setTimeout(() => {
+                favoriteItem.remove();
+            }, 300);
+        });
+    });
+});
+</script>
+{% endblock %}

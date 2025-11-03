@@ -1,0 +1,761 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - Crave Bite{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('about') }}">About Us</a></li>
+{% endblock %}
+
+{% block content %}
+<section class="about-hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="animate-fade-in">Our Story</h1>
+            <p class="animate-fade-in delay-1">Discover the passion behind our delicious meals</p>
+            <div class="hero-features animate-fade-in delay-2">
+                <div class="feature">
+                    <span class="icon">👨‍🍳</span>
+                    <span>Chef-Crafted Recipes</span>
+                </div>
+                <div class="feature">
+                    <span class="icon">🌱</span>
+                    <span>Fresh Ingredients</span>
+                </div>
+                <div class="feature">
+                    <span class="icon">🚚</span>
+                    <span>Fast Delivery</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="our-story">
+    <div class="container">
+        <div class="section-header text-center">
+            <h2>How It All Started</h2>
+            <p class="subtitle">A journey of passion and flavor</p>
+        </div>
+        
+        <div class="story-timeline">
+            <div class="timeline-item animate-slide-in-left">
+                <div class="timeline-year">2018</div>
+                <div class="timeline-content">
+                    <h3>The Beginning</h3>
+                    <p>Founded by a group of food enthusiasts who believed that great food should be accessible to everyone. What started as a small kitchen operation quickly grew into something much bigger.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item animate-slide-in-right">
+                <div class="timeline-year">2020</div>
+                <div class="timeline-content">
+                    <h3>Expansion</h3>
+                    <p>We expanded our team and partnered with local farms to source the freshest ingredients. Our commitment to quality and sustainability became the cornerstone of our business.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item animate-slide-in-left">
+                <div class="timeline-year">2022</div>
+                <div class="timeline-content">
+                    <h3>Technology Integration</h3>
+                    <p>Launched our mobile app and website to make ordering easier than ever. Introduced our subscription service for regular customers who want consistent quality meals.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item animate-slide-in-right">
+                <div class="timeline-year">2024</div>
+                <div class="timeline-content">
+                    <h3>National Recognition</h3>
+                    <p>Recognized as one of the top food delivery services in the country. We've served over 1 million happy customers and continue to grow every day.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="our-values">
+    <div class="container">
+        <div class="section-header text-center">
+            <h2>Our Core Values</h2>
+            <p class="subtitle">What drives us every day</p>
+        </div>
+        
+        <div class="values-grid">
+            <div class="value-card animate-fade-in-up delay-1">
+                <div class="value-icon"> Quality</div>
+                <h3>Quality First</h3>
+                <p>We never compromise on the quality of our ingredients or preparation methods. Every meal is crafted with care and attention to detail.</p>
+            </div>
+            
+            <div class="value-card animate-fade-in-up delay-2">
+                <div class="value-icon"> Sustainability</div>
+                <h3>Sustainability</h3>
+                <p>We're committed to sustainable practices, from sourcing local ingredients to using eco-friendly packaging.</p>
+            </div>
+            
+            <div class="value-card animate-fade-in-up delay-3">
+                <div class="value-icon"> Innovation</div>
+                <h3>Innovation</h3>
+                <p>Constantly evolving our menu and services to bring you new and exciting culinary experiences.</p>
+            </div>
+            
+            <div class="value-card animate-fade-in-up delay-4">
+                <div class="value-icon"> Community</div>
+                <h3>Community</h3>
+                <p>We believe in giving back to the communities we serve through various charitable initiatives.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="team-section">
+    <div class="container">
+        <div class="section-header text-center">
+            <h2>Meet Our Team</h2>
+            <p class="subtitle">The talented people behind our success</p>
+        </div>
+        
+        <div class="team-grid">
+            <div class="team-member animate-zoom-in delay-1">
+                <div class="member-image">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="Alex Johnson">
+                </div>
+                <div class="member-info">
+                    <h3>Alex Johnson</h3>
+                    <p class="role">Founder & CEO</p>
+                    <p>With over 15 years in the food industry, Alex brings passion and innovation to every dish we create.</p>
+                </div>
+            </div>
+            
+            <div class="team-member animate-zoom-in delay-2">
+                <div class="member-image">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="Sarah Williams">
+                </div>
+                <div class="member-info">
+                    <h3>Sarah Williams</h3>
+                    <p class="role">Head Chef</p>
+                    <p>Sarah's culinary expertise and creative flair ensure every meal exceeds expectations.</p>
+                </div>
+            </div>
+            
+            <div class="team-member animate-zoom-in delay-3">
+                <div class="member-image">
+                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="Michael Chen">
+                </div>
+                <div class="member-info">
+                    <h3>Michael Chen</h3>
+                    <p class="role">Operations Manager</p>
+                    <p>Michael ensures our delivery system runs smoothly and efficiently, so your food arrives fresh and on time.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content animate-fade-in">
+            <h2>Join Our Culinary Journey</h2>
+            <p>Experience the difference that passion and quality make in every meal.</p>
+            <a href="{{ url_for('subscription') }}" class="btn btn-primary btn-large">Explore Our Menu</a>
+        </div>
+    </div>
+</section>
+
+<style>
+/* Hero Section */
+.about-hero {
+    background: linear-gradient(135deg, #0a3d2f 0%, #1a5d45 100%);
+    color: white;
+    padding: 120px 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.about-hero::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+    transform: rotate(30deg);
+    animation: shine 8s infinite;
+}
+
+.about-hero h1 {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    font-weight: 800;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    position: relative;
+    z-index: 2;
+    letter-spacing: -1px;
+}
+
+.about-hero p {
+    font-size: 1.5rem;
+    margin-bottom: 40px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    z-index: 2;
+    opacity: 0.9;
+    font-weight: 300;
+}
+
+.hero-features {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 2;
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.feature:nth-child(1) { animation-delay: 0.1s; }
+.feature:nth-child(2) { animation-delay: 0.2s; }
+.feature:nth-child(3) { animation-delay: 0.3s; }
+
+.feature .icon {
+    font-size: 2.5rem;
+}
+
+/* Story Timeline */
+.our-story {
+    padding: 100px 0;
+    background: #f8f9fa;
+}
+
+.story-timeline {
+    max-width: 800px;
+    margin: 60px auto 0;
+    position: relative;
+}
+
+.story-timeline::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: #0a3d2f;
+    left: 50%;
+    margin-left: -2px;
+    border-radius: 2px;
+}
+
+.timeline-item {
+    margin-bottom: 50px;
+    position: relative;
+    width: 100%;
+}
+
+.timeline-item:nth-child(odd) {
+    padding-right: calc(50% + 30px);
+    text-align: right;
+}
+
+.timeline-item:nth-child(even) {
+    padding-left: calc(50% + 30px);
+}
+
+.timeline-year {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background: #0a3d2f;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    top: 0;
+    left: 50%;
+    margin-left: -40px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.timeline-content {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.timeline-content:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+.timeline-content h3 {
+    color: #0a3d2f;
+    margin-bottom: 15px;
+    font-size: 1.8rem;
+}
+
+.timeline-content p {
+    color: #666;
+    line-height: 1.7;
+    font-size: 1.1rem;
+}
+
+/* Our Values */
+.our-values {
+    padding: 100px 0;
+}
+
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.value-card {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.value-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(10, 61, 47, 0.05) 0%, rgba(212, 175, 55, 0.05) 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.value-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.value-card:hover::before {
+    opacity: 1;
+}
+
+.value-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #0a3d2f, #1a5d45);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.value-card h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.value-card p {
+    color: #666;
+    line-height: 1.7;
+    font-size: 1.1rem;
+}
+
+/* Team Section */
+.team-section {
+    padding: 100px 0;
+    background: #f8f9fa;
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+    margin-top: 50px;
+}
+
+.team-member {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    text-align: center;
+}
+
+.team-member:hover {
+    transform: translateY(-15px);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+}
+
+.member-image {
+    height: 300px;
+    overflow: hidden;
+}
+
+.member-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.team-member:hover .member-image img {
+    transform: scale(1.1);
+}
+
+.member-info {
+    padding: 30px;
+}
+
+.member-info h3 {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.role {
+    color: #0a3d2f;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.member-info p {
+    color: #666;
+    line-height: 1.7;
+    font-size: 1.1rem;
+}
+
+/* CTA Section */
+.cta-section {
+    padding: 100px 0;
+    background: linear-gradient(135deg, #0a3d2f 0%, #1a5d45 100%);
+    color: white;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-section::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+    transform: rotate(30deg);
+    animation: shine 10s infinite;
+}
+
+.cta-content h2 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    font-weight: 800;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    position: relative;
+    z-index: 2;
+}
+
+.cta-content p {
+    font-size: 1.3rem;
+    margin-bottom: 40px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    z-index: 2;
+    opacity: 0.9;
+    font-weight: 300;
+}
+
+.btn-large {
+    padding: 18px 45px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    position: relative;
+    z-index: 2;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shine {
+    0% { transform: rotate(30deg) translate(-15%, -15%); }
+    50% { transform: rotate(30deg) translate(0%, 0%); }
+    100% { transform: rotate(30deg) translate(15%, 15%); }
+}
+
+/* Animation classes */
+.animate-fade-in {
+    opacity: 0;
+    animation: fadeInUp 1s ease-out forwards;
+}
+
+.animate-fade-in.delay-1 {
+    animation-delay: 0.2s;
+}
+
+.animate-fade-in.delay-2 {
+    animation-delay: 0.4s;
+}
+
+.animate-fade-in-up {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-fade-in-up.delay-1 {
+    animation-delay: 0.1s;
+}
+
+.animate-fade-in-up.delay-2 {
+    animation-delay: 0.2s;
+}
+
+.animate-fade-in-up.delay-3 {
+    animation-delay: 0.3s;
+}
+
+.animate-fade-in-up.delay-4 {
+    animation-delay: 0.4s;
+}
+
+.animate-slide-in-left {
+    opacity: 0;
+    transform: translateX(-50px);
+    animation: slideInLeft 0.8s ease-out forwards;
+}
+
+@keyframes slideInLeft {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.animate-slide-in-right {
+    opacity: 0;
+    transform: translateX(50px);
+    animation: slideInRight 0.8s ease-out forwards;
+}
+
+@keyframes slideInRight {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.animate-zoom-in {
+    opacity: 0;
+    transform: scale(0.8);
+    animation: zoomIn 0.6s ease-out forwards;
+}
+
+@keyframes zoomIn {
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-zoom-in.delay-1 {
+    animation-delay: 0.1s;
+}
+
+.animate-zoom-in.delay-2 {
+    animation-delay: 0.2s;
+}
+
+.animate-zoom-in.delay-3 {
+    animation-delay: 0.3s;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .about-hero h1 {
+        font-size: 3.5rem;
+    }
+    
+    .about-hero p {
+        font-size: 1.3rem;
+    }
+    
+    .hero-features {
+        gap: 30px;
+    }
+    
+    .timeline-item:nth-child(odd),
+    .timeline-item:nth-child(even) {
+        padding: 0 30px;
+        text-align: left;
+    }
+    
+    .story-timeline::before {
+        left: 30px;
+    }
+    
+    .timeline-year {
+        left: 30px;
+        margin-left: 0;
+    }
+    
+    .timeline-item {
+        padding-left: 80px !important;
+        padding-right: 0 !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .about-hero {
+        padding: 80px 0;
+    }
+    
+    .about-hero h1 {
+        font-size: 2.8rem;
+    }
+    
+    .about-hero p {
+        font-size: 1.2rem;
+    }
+    
+    .hero-features {
+        flex-direction: column;
+        gap: 25px;
+    }
+    
+    .our-story,
+    .our-values,
+    .team-section,
+    .cta-section {
+        padding: 70px 0;
+    }
+    
+    .cta-content h2 {
+        font-size: 2.5rem;
+    }
+    
+    .cta-content p {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-hero {
+        padding: 60px 0;
+    }
+    
+    .about-hero h1 {
+        font-size: 2.3rem;
+    }
+    
+    .about-hero p {
+        font-size: 1rem;
+    }
+    
+    .story-timeline::before {
+        left: 20px;
+    }
+    
+    .timeline-year {
+        left: 20px;
+        width: 60px;
+        height: 60px;
+        font-size: 1rem;
+        margin-left: 0;
+    }
+    
+    .timeline-item {
+        padding-left: 60px !important;
+    }
+    
+    .timeline-content {
+        padding: 20px;
+    }
+    
+    .timeline-content h3 {
+        font-size: 1.5rem;
+    }
+    
+    .value-card {
+        padding: 30px 20px;
+    }
+    
+    .cta-content h2 {
+        font-size: 2rem;
+    }
+}
+</style>
+
+<script>
+// Animation on scroll
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if element is in viewport
+    function isInViewport(element) {
+        const rect = element.getBoundingClientRect();
+        return (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+    }
+    
+    // Add animation classes when elements come into view
+    function animateOnScroll() {
+        const animatedElements = document.querySelectorAll('.animate-fade-in, .animate-fade-in-up, .animate-slide-in-left, .animate-slide-in-right, .animate-zoom-in');
+        
+        animatedElements.forEach(element => {
+            if (isInViewport(element)) {
+                // Remove any existing animation classes that might prevent re-animation
+                element.style.opacity = 1;
+                element.style.transform = '';
+            }
+        });
+    }
+    
+    // Initial check
+    animateOnScroll();
+    
+    // Check on scroll
+    window.addEventListener('scroll', animateOnScroll);
+    
+    // Also trigger on resize
+    window.addEventListener('resize', animateOnScroll);
+});
+</script>
+{% endblock %}

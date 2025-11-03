@@ -1,0 +1,542 @@
+{% extends "base.html" %}
+
+{% block title %}Menu - Crave Bite{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('menu') }}">Menu</a></li>
+{% endblock %}
+
+{% block content %}
+<section class="menu-section">
+    <div class="container">
+        <div class="section-header">
+            <h1>Our Delicious Menu</h1>
+            <p>Explore our wide selection of mouth-watering dishes</p>
+        </div>
+        
+        <div class="menu-controls">
+            <div class="search-box">
+                <input type="text" id="menu-search" placeholder="Search dishes...">
+                <button id="search-btn">🔍</button>
+            </div>
+            <div class="filter-controls">
+                <div class="category-filters">
+                    <button class="category-btn active" data-category="all">All</button>
+                    <button class="category-btn" data-category="Main Course">Main Course</button>
+                    <button class="category-btn" data-category="Appetizer">Appetizers</button>
+                    <button class="category-btn" data-category="Dessert">Desserts</button>
+                    <button class="category-btn" data-category="Beverage">Beverages</button>
+                </div>
+                <div class="sort-options">
+                    <select id="sort-menu">
+                        <option value="popular">Most Popular</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="name">Name A-Z</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="menu-grid">
+            {% for item in menu_data %}
+            <div class="menu-item" data-category="{{ item.category }}" data-price="{{ item.price }}">
+                <div class="item-image">
+                    <img src="{{ item.image }}" alt="{{ item.name }}">
+                </div>
+                <div class="item-details">
+                    <h3>{{ item.name }}</h3>
+                    <p class="item-description">{{ item.description }}</p>
+                    <div class="item-footer">
+                        <span class="price">₹{{ item.price }}</span>
+                        <div class="item-actions">
+                            <form method="POST" action="{{ url_for('add_to_cart') }}" class="add-to-cart-form">
+                                <input type="hidden" name="item_id" value="{{ item.id }}">
+                                <div class="quantity-control">
+                                    <button type="button" class="quantity-btn minus">-</button>
+                                    <input type="number" name="quantity" class="quantity-input" value="1" min="1" max="10">
+                                    <button type="button" class="quantity-btn plus">+</button>
+                                </div>
+                                <button type="submit" class="add-to-cart-btn">Add to Cart</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<style>
+.menu-section {
+    padding: 40px 0;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.section-header h1 {
+    font-size: 2.5rem;
+    color: #0a3d2f;
+    margin-bottom: 15px;
+}
+
+.section-header p {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.menu-controls {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
+}
+
+.search-box {
+    display: flex;
+    max-width: 500px;
+    margin: 0 auto 25px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    overflow: hidden;
+}
+
+.search-box input {
+    flex: 1;
+    border: none;
+    padding: 15px 20px;
+    font-size: 1rem;
+    outline: none;
+}
+
+.search-box button {
+    background: #0a3d2f;
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: background 0.3s;
+}
+
+.search-box button:hover {
+    background: #146b52;
+}
+
+.filter-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.category-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.category-btn {
+    background: #f0f0f0;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.category-btn.active,
+.category-btn:hover {
+    background: #0a3d2f;
+    color: white;
+}
+
+.sort-options select {
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    background: white;
+    outline: none;
+    font-weight: 600;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.menu-item {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+    animation: fadeIn 0.5s ease;
+}
+
+.menu-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.item-image {
+    height: 200px;
+    overflow: hidden;
+}
+
+.item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.menu-item:hover .item-image img {
+    transform: scale(1.05);
+}
+
+.item-details {
+    padding: 25px;
+}
+
+.item-details h3 {
+    color: #0a3d2f;
+    margin: 0 0 15px 0;
+    font-size: 1.4rem;
+}
+
+.item-description {
+    color: #666;
+    margin: 0 0 20px 0;
+    line-height: 1.6;
+}
+
+.item-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #0a3d2f;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+}
+
+.quantity-btn {
+    width: 35px;
+    height: 35px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.quantity-btn:hover {
+    background: #0a3d2f;
+    color: white;
+    border-color: #0a3d2f;
+}
+
+.quantity-input {
+    width: 50px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 0 10px;
+    padding: 8px;
+    font-weight: 600;
+}
+
+.add-to-cart-btn {
+    background: #0a3d2f;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.add-to-cart-btn:hover {
+    background: #146b52;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .section-header h1 {
+        font-size: 2rem;
+    }
+    
+    .filter-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .category-filters {
+        justify-content: center;
+    }
+    
+    .menu-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .item-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .item-actions {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Menu search functionality
+    const menuSearch = document.getElementById('menu-search');
+    const searchBtn = document.getElementById('search-btn');
+    const menuItems = document.querySelectorAll('.menu-item');
+    
+    function filterMenu() {
+        const searchTerm = menuSearch.value.toLowerCase();
+        
+        menuItems.forEach(item => {
+            const itemName = item.querySelector('h3').textContent.toLowerCase();
+            const itemDesc = item.querySelector('.item-description').textContent.toLowerCase();
+            const itemCategory = item.dataset.category.toLowerCase();
+            
+            if (itemName.includes(searchTerm) || 
+                itemDesc.includes(searchTerm) || 
+                itemCategory.includes(searchTerm)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+    
+    if (menuSearch) {
+        menuSearch.addEventListener('input', filterMenu);
+    }
+    
+    if (searchBtn) {
+        searchBtn.addEventListener('click', filterMenu);
+    }
+    
+    // Category filtering
+    const categoryButtons = document.querySelectorAll('.category-btn');
+    categoryButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            categoryButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            const category = this.dataset.category;
+            
+            menuItems.forEach(item => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    });
+    
+    // Menu sorting functionality
+    const sortMenu = document.getElementById('sort-menu');
+    
+    if (sortMenu) {
+        sortMenu.addEventListener('change', function() {
+            const menuContainer = document.querySelector('.menu-grid');
+            const items = Array.from(menuItems);
+            
+            items.sort((a, b) => {
+                switch(sortMenu.value) {
+                    case 'price-low':
+                        return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+                    case 'price-high':
+                        return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+                    case 'name':
+                        const nameA = a.querySelector('h3').textContent;
+                        const nameB = b.querySelector('h3').textContent;
+                        return nameA.localeCompare(nameB);
+                    default: // popular
+                        return 0;
+                }
+            });
+            
+            // Re-append sorted items to container
+            items.forEach(item => menuContainer.appendChild(item));
+        });
+    }
+    
+    // Quantity control for menu items
+    const menuQuantityControls = document.querySelectorAll('.menu-item .quantity-control');
+    menuQuantityControls.forEach(control => {
+        const minusBtn = control.querySelector('.quantity-btn.minus');
+        const plusBtn = control.querySelector('.quantity-btn.plus');
+        const input = control.querySelector('.quantity-input');
+        
+        minusBtn.addEventListener('click', function() {
+            let value = parseInt(input.value) || 1;
+            if (value > 1) {
+                input.value = value - 1;
+            }
+        });
+        
+        plusBtn.addEventListener('click', function() {
+            let value = parseInt(input.value) || 1;
+            if (value < 10) {
+                input.value = value + 1;
+            }
+        });
+        
+        input.addEventListener('change', function() {
+            let value = parseInt(this.value) || 1;
+            if (value < 1) {
+                this.value = 1;
+            } else if (value > 10) {
+                this.value = 10;
+            }
+        });
+    });
+    
+    // Add to cart form submission with AJAX
+    const addToCartForms = document.querySelectorAll('.add-to-cart-form');
+    addToCartForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const submitBtn = this.querySelector('.add-to-cart-btn');
+            const originalText = submitBtn.textContent;
+            
+            // Show loading state
+            submitBtn.textContent = 'Adding...';
+            submitBtn.disabled = true;
+            
+            fetch('/add_to_cart', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success notification
+                    showNotification('Item added to cart successfully!');
+                    
+                    // Reset button
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                    
+                    // Update cart indicator
+                    updateCartIndicator();
+                } else {
+                    showNotification('Error adding item to cart', 'error');
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Error adding item to cart', 'error');
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+    });
+    
+    // Show notification function
+    function showNotification(message, type = 'success') {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.textContent = message;
+        notification.style.position = 'fixed';
+        notification.style.bottom = '20px';
+        notification.style.right = '20px';
+        notification.style.backgroundColor = type === 'error' ? '#e74c3c' : '#27ae60';
+        notification.style.color = 'white';
+        notification.style.padding = '15px 20px';
+        notification.style.borderRadius = '5px';
+        notification.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+        notification.style.zIndex = '1000';
+        notification.style.fontWeight = 'bold';
+        notification.style.transform = 'translateY(100px)';
+        notification.style.transition = 'transform 0.3s ease';
+        
+        // Add to document
+        document.body.appendChild(notification);
+        
+        // Animate in
+        setTimeout(() => {
+            notification.style.transform = 'translateY(0)';
+        }, 10);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+            notification.style.transform = 'translateY(100px)';
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 3000);
+    }
+    
+    // Update cart indicator function
+    function updateCartIndicator() {
+        fetch('/api/cart_count')
+            .then(response => response.json())
+            .then(data => {
+                const cartIndicators = document.querySelectorAll('.cart-indicator');
+                const cartCount = data.count || 0;
+                
+                cartIndicators.forEach(indicator => {
+                    indicator.textContent = cartCount;
+                    indicator.style.display = cartCount > 0 ? 'flex' : 'none';
+                });
+            })
+            .catch(error => {
+                console.error('Error updating cart indicator:', error);
+            });
+    }
+});
+</script>
+{% endblock %}

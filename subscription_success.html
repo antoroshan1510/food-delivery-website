@@ -1,0 +1,388 @@
+{% extends "base.html" %}
+
+{% block title %}Subscription Success - Crave Bite{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('subscription') }}">Subscription</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('subscription_checkout') }}">Checkout</a></li>
+<li class="breadcrumb-item">Success</li>
+{% endblock %}
+
+{% block content %}
+<section class="subscription-success-section">
+    <div class="container">
+        <div class="success-content">
+            <div class="success-icon">
+                <span>✓</span>
+            </div>
+            <h1>Subscription Created Successfully!</h1>
+            <p>Thank you for subscribing to Crave Bite. Your subscription has been created successfully.</p>
+            
+            <div class="subscription-details">
+                <h2>Subscription Details</h2>
+                <div class="detail-row">
+                    <span>Subscription ID:</span>
+                    <span>{{ subscription_id }}</span>
+                </div>
+                <div class="detail-row">
+                    <span>Name:</span>
+                    <span>{{ name }}</span>
+                </div>
+                <div class="detail-row">
+                    <span>Email:</span>
+                    <span>{{ email }}</span>
+                </div>
+                <div class="detail-row">
+                    <span>Payment Status:</span>
+                    <span class="{{ 'success' if payment_verified else 'pending' }}">{{ payment_status }}</span>
+                </div>
+            </div>
+
+            {% if smart_plan_preferences %}
+            <div class="smart-plan-section">
+                <h2>Subscription Preferences</h2>
+                <div class="preferences-details">
+                    <div class="detail-row">
+                        <span>Dietary Preferences:</span>
+                        <span>
+                            {% if smart_plan_preferences.dietary %}
+                                {{ smart_plan_preferences.dietary|join(', ') }}
+                            {% else %}
+                                No specific dietary preferences
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span>Preferred Cuisine:</span>
+                        <span>
+                            {% if smart_plan_preferences.cuisine != 'any' %}
+                                {{ smart_plan_preferences.cuisine|title }}
+                            {% else %}
+                                Any cuisine
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                <p class="info-text">Our chefs will create a personalized selection based on your preferences for the duration of your subscription.</p>
+            </div>
+            {% endif %}
+
+            {% if selected_meals and selected_meals|length > 0 %}
+            <div class="selected-meals-section">
+                <h2>Your Selections</h2>
+                <div class="meals-grid">
+                    {% for meal_key, meal in selected_meals.items() %}
+                    <div class="meal-card">
+                        <div class="meal-name">{{ meal.name }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="next-steps">
+                <h3>What's Next?</h3>
+                <ul>
+                    <li>You will receive a confirmation email with your subscription details</li>
+                    <li>Your selections will be prepared according to your plan</li>
+                    <li>You can manage your subscription from your profile page</li>
+                    {% if selected_meals and selected_meals|length > 0 %}
+                    <li>Your selections will be prepared for your first delivery</li>
+                    {% endif %}
+                </ul>
+            </div>
+            
+            <div class="actions">
+                <a href="{{ url_for('index') }}" class="btn btn-primary">Continue Shopping</a>
+                <a href="{{ url_for('profile') }}" class="btn btn-secondary">View Subscription</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.subscription-success-section {
+    padding: 60px 0;
+    background: #f8f9fa;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+}
+
+.success-content {
+    background: white;
+    padding: 50px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.success-icon {
+    width: 80px;
+    height: 80px;
+    background: #006400; /* Dark green */
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 0 auto 30px;
+}
+
+.success-content h1 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+}
+
+.success-content p {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 40px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.subscription-details {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 10px;
+    margin-bottom: 40px;
+    text-align: left;
+}
+
+.subscription-details h2 {
+    color: #006400; /* Dark green */
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.smart-plan-section {
+    background: #e8f5e9;
+    padding: 25px;
+    border-radius: 10px;
+    margin-bottom: 40px;
+    text-align: left;
+    border: 1px solid #c8e6c9;
+}
+
+.smart-plan-section h2 {
+    color: #006400; /* Dark green */
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.preferences-details {
+    margin-bottom: 15px;
+}
+
+.info-text {
+    color: #333;
+    font-style: italic;
+    text-align: center;
+    margin-top: 15px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-row span:first-child {
+    font-weight: 600;
+    color: #333;
+}
+
+.detail-row .success {
+    color: #4caf50;
+    font-weight: 600;
+}
+
+.detail-row .pending {
+    color: #ff9800;
+    font-weight: 600;
+}
+
+.selected-meals-section {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 10px;
+    margin-bottom: 40px;
+    text-align: left;
+}
+
+.selected-meals-section h2 {
+    color: #006400; /* Dark green */
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.meals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.meal-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    border: 1px solid #eee;
+    transition: all 0.3s ease;
+}
+
+.meal-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.meal-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0;
+}
+
+.meal-price {
+    font-weight: bold;
+    color: #006400; /* Dark green */
+    font-size: 1.2rem;
+}
+
+.next-steps {
+    text-align: left;
+    margin-bottom: 40px;
+}
+
+.next-steps h3 {
+    color: #006400; /* Dark green */
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.next-steps ul {
+    list-style: none;
+    padding: 0;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.next-steps li {
+    padding: 10px 0 10px 30px;
+    position: relative;
+    color: #666;
+}
+
+.next-steps li:before {
+    content: "✓";
+    color: #006400; /* Dark green */
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.btn-primary {
+    background: #006400; /* Dark green */
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary:hover {
+    background: #004d00; /* Darker green for hover */
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: #FFD700; /* Gold */
+    color: #333;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-secondary:hover {
+    background: #e6c200; /* Darker gold for hover */
+    transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .success-content {
+        padding: 30px 20px;
+        margin: 20px;
+    }
+    
+    .success-content h1 {
+        font-size: 2rem;
+    }
+    
+    .actions {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+    }
+    
+    .meals-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .subscription-success-section {
+        padding: 30px 0;
+    }
+    
+    .success-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 2rem;
+    }
+    
+    .detail-row {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+</style>
+{% endblock %}
+
+
+
+

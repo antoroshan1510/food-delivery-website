@@ -1,0 +1,429 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - Crave Bite{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('cart') }}">Cart</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('checkout') }}">Checkout</a></li>
+{% endblock %}
+
+{% block content %}
+<section class="checkout-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Checkout</h2>
+            <p>Complete your order and provide delivery information</p>
+        </div>
+        
+        <div class="checkout-layout">
+            <div class="checkout-form-container">
+                <form id="checkout-form" class="checkout-form" method="POST" action="{{ url_for('process_checkout') }}">
+                    <div class="form-section">
+                        <h3>Delivery Information</h3>
+                        <div class="form-group">
+                            <label for="name">Full Name *</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Phone Number *</label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address">Delivery Address *</label>
+                            <textarea id="address" name="address" rows="3" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="delivery-notes">Delivery Notes (Optional)</label>
+                            <textarea id="delivery-notes" name="delivery-notes" rows="2" placeholder="Special instructions for delivery"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="save-info" name="save-info">
+                                Save my information for next time
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>Payment Information</h3>
+                        <div class="form-group">
+                            <label for="payment">Payment Method *</label>
+                            <select id="payment" name="payment" required>
+                                <option value="">Select Payment Method</option>
+                                <option value="credit">Credit Card</option>
+                                <option value="debit">Debit Card</option>
+                                <option value="upi">UPI</option>
+                                <option value="razorpay">Razorpay</option>
+                                <option value="paypal">PayPal</option>
+                                <option value="cash">Cash on Delivery</option>
+                            </select>
+                        </div>
+                        
+                        <div class="payment-details" id="card-details" style="display: none;">
+                            <div class="form-group">
+                                <label for="card-number">Card Number *</label>
+                                <input type="text" id="card-number" name="card-number" placeholder="1234 5678 9012 3456">
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="expiry-date">Expiry Date *</label>
+                                    <input type="text" id="expiry-date" name="expiry-date" placeholder="MM/YY">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="cvv">CVV *</label>
+                                    <input type="text" id="cvv" name="cvv" placeholder="123">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="card-name">Name on Card *</label>
+                                <input type="text" id="card-name" name="card-name" placeholder="John Doe">
+                            </div>
+                        </div>
+                        
+                        <!-- Razorpay payment button (hidden by default) -->
+                        <div class="payment-details" id="razorpay-details" style="display: none; text-align: center; margin-top: 20px;">
+                            <button type="button" id="razorpay-btn" class="btn" style="background-color: #0267ff; color: white;">
+                                Pay with Razorpay
+                            </button>
+                            <p class="payment-note">You will be redirected to Razorpay to complete your payment securely.</p>
+                            <input type="hidden" id="razorpay_order_id" name="razorpay_order_id">
+                            <input type="hidden" id="razorpay_payment_id" name="razorpay_payment_id">
+                            <input type="hidden" id="razorpay_signature" name="razorpay_signature">
+                        </div>
+                        
+                        <!-- UPI payment details -->
+                        <div class="payment-details" id="upi-details" style="display: none;">
+                            <div class="form-group">
+                                <label for="upi-id">UPI ID</label>
+                                <input type="text" id="upi-id" name="upi-id" placeholder="yourname@upi">
+                            </div>
+                            <p class="payment-note">You will receive a payment request on your UPI app.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>Order Summary</h3>
+                        <div class="order-summary">
+                            {% set subtotal = 0 %}
+                            {% for item in cart_items %}
+                                {% set subtotal = subtotal + (item.price * item.quantity) %}
+                                <div class="summary-item">
+                                    <div class="item-info">
+                                        <span>{{ item.name }} (x{{ item.quantity }})</span>
+                                        <span class="item-price">₹{{ "%.2f"|format(item.price * item.quantity) }}</span>
+                                    </div>
+                                    {% if item.instructions %}
+                                    <div class="item-instructions">
+                                        <small>Instructions: {{ item.instructions }}</small>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                            
+                            <div class="summary-row">
+                                <span>Subtotal</span>
+                                <span>₹{{ "%.2f"|format(subtotal) }}</span>
+                            </div>
+                            
+                            <div class="summary-row">
+                                <span>Delivery Fee</span>
+                                <span>₹{{ "%.2f"|format(subtotal * 0.1) }}</span>
+                            </div>
+                            
+                            <div class="summary-row">
+                                <span>Tax</span>
+                                <span>₹{{ "%.2f"|format(subtotal * 0.08) }}</span>
+                            </div>
+                            
+                            <div class="summary-row discount" id="discount-row" style="display: none;">
+                                <span>Discount</span>
+                                <span id="discount-amount">₹0.00</span>
+                            </div>
+                            
+                            <div class="summary-row total">
+                                <span>Total</span>
+                                <span id="total-amount">₹{{ "%.2f"|format(subtotal + (subtotal * 0.1) + (subtotal * 0.08)) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="terms" required>
+                            I agree to the <a href="#" target="_blank">Terms and Conditions</a> and <a href="#" target="_blank">Privacy Policy</a>
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="newsletter" checked>
+                            Subscribe to our newsletter for updates and offers
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn checkout-btn">Place Order</button>
+                </form>
+            </div>
+            
+            <div class="checkout-sidebar">
+                <div class="order-timeline">
+                    <h3>Order Progress</h3>
+                    <div class="timeline">
+                        <div class="timeline-step">
+                            <div class="step-icon">1</div>
+                            <div class="step-label">Cart</div>
+                        </div>
+                        <div class="timeline-step active">
+                            <div class="step-icon">2</div>
+                            <div class="step-label">Checkout</div>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="step-icon">3</div>
+                            <div class="step-label">Confirmation</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="secure-payment">
+                    <h3>🔒 Secure Payment</h3>
+                    <p>Your payment information is encrypted and secure.</p>
+                    <div class="security-icons">
+                        <span class="security-icon">🛡️</span>
+                        <span class="security-icon">💳</span>
+                        <span class="security-icon">🔒</span>
+                    </div>
+                </div>
+                
+                <div class="support-info">
+                    <h3>Need Help?</h3>
+                    <p>Contact our customer support team:</p>
+                    <p>📞 +1 (555) 123-4567</p>
+                    <p>✉️ support@cravebite.com</p>
+                    <p>Available 24/7</p>
+                </div>
+                
+                <div class="money-back">
+                    <h3>💯 Money Back Guarantee</h3>
+                    <p>Not satisfied with your order? We offer a 100% money-back guarantee.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Razorpay Checkout Script -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Show/hide card details based on payment method
+    const paymentSelect = document.getElementById('payment');
+    const cardDetails = document.getElementById('card-details');
+    const razorpayDetails = document.getElementById('razorpay-details');
+    const upiDetails = document.getElementById('upi-details');
+    
+    if (paymentSelect && cardDetails && razorpayDetails && upiDetails) {
+        paymentSelect.addEventListener('change', function() {
+            // Hide all payment details
+            cardDetails.style.display = 'none';
+            razorpayDetails.style.display = 'none';
+            upiDetails.style.display = 'none';
+            
+            // Show relevant payment details
+            if (this.value === 'credit' || this.value === 'debit') {
+                cardDetails.style.display = 'block';
+            } else if (this.value === 'razorpay') {
+                razorpayDetails.style.display = 'block';
+            } else if (this.value === 'upi') {
+                upiDetails.style.display = 'block';
+            }
+        });
+    }
+    
+    // Format card number input
+    const cardNumberInput = document.getElementById('card-number');
+    if (cardNumberInput) {
+        cardNumberInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove non-digit characters
+            let formattedValue = '';
+            
+            for (let i = 0; i < value.length; i++) {
+                if (i > 0 && i % 4 === 0) {
+                    formattedValue += ' ';
+                }
+                formattedValue += value[i];
+            }
+            
+            e.target.value = formattedValue;
+        });
+    }
+    
+    // Format expiry date input
+    const expiryDateInput = document.getElementById('expiry-date');
+    if (expiryDateInput) {
+        expiryDateInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove non-digit characters
+            
+            if (value.length > 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            
+            e.target.value = value;
+        });
+    }
+    
+    // Razorpay payment handler
+    const razorpayBtn = document.getElementById('razorpay-btn');
+    if (razorpayBtn) {
+        razorpayBtn.addEventListener('click', function() {
+            // Get the total amount (remove ₹ sign and convert to number)
+            const totalAmountText = document.getElementById('total-amount').textContent;
+            const totalAmount = parseFloat(totalAmountText.replace('₹', ''));
+            
+            // Get form data
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            
+            // Validate required fields
+            if (!name || !email || !phone) {
+                alert('Please fill in all required delivery information before proceeding with payment.');
+                return;
+            }
+            
+            // Create order data to send to server
+            const orderData = {
+                amount: totalAmount,
+                customer_name: name,
+                customer_email: email
+            };
+            
+            // Send request to create Razorpay order
+            fetch('/create_razorpay_order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(orderData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Error creating order: ' + data.error);
+                    return;
+                }
+                
+                // Create Razorpay options
+                var options = {
+                    "key": data.key_id, // Use the key from server response
+                    "amount": data.amount, // Amount in paise
+                    "currency": data.currency,
+                    "name": "Crave Bite",
+                    "description": "Food Order Payment",
+                    "image": "https://example.com/your_logo.png",
+                    "order_id": data.order_id, // Order ID from server
+                    "handler": function (response){
+                        // Payment successful
+                        document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
+                        document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+                        document.getElementById('razorpay_signature').value = response.razorpay_signature;
+                        
+                        // Submit the form to process the order
+                        document.getElementById('checkout-form').submit();
+                    },
+                    "prefill": {
+                        "name": name,
+                        "email": email,
+                        "contact": phone
+                    },
+                    "notes": {
+                        "address": document.getElementById('address').value
+                    },
+                    "theme": {
+                        "color": "#0a3d2f"
+                    }
+                };
+                
+                // Open Razorpay checkout
+                var rzp = new Razorpay(options);
+                rzp.on('payment.failed', function (response){
+                    alert('Payment failed: ' + response.error.description);
+                });
+                rzp.open();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error creating order. Please try again.');
+            });
+        });
+    }
+    
+    // Form submission
+    const checkoutForm = document.getElementById('checkout-form');
+    if (checkoutForm) {
+        checkoutForm.addEventListener('submit', function(e) {
+            const paymentMethod = document.getElementById('payment').value;
+            
+            // If Razorpay is selected and we have payment details, let Razorpay handle it
+            if (paymentMethod === 'razorpay' && document.getElementById('razorpay_payment_id').value) {
+                // Allow form submission to proceed
+                return;
+            }
+            
+            // If Razorpay is selected but no payment details, prevent submission
+            if (paymentMethod === 'razorpay' && !document.getElementById('razorpay_payment_id').value) {
+                e.preventDefault();
+                alert('Please complete the Razorpay payment before submitting the order.');
+                return;
+            }
+            
+            // For other payment methods, show success message
+            // e.preventDefault();
+            // alert('Order placed successfully! Thank you for your order.');
+            
+            // Form will be submitted normally for other payment methods
+        });
+    }
+    
+    // Auto-save form data if requested
+    const saveInfoCheckbox = document.getElementById('save-info');
+    if (saveInfoCheckbox) {
+        // Load saved data if available
+        const savedData = localStorage.getItem('checkoutInfo');
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            document.getElementById('name').value = data.name || '';
+            document.getElementById('email').value = data.email || '';
+            document.getElementById('phone').value = data.phone || '';
+            document.getElementById('address').value = data.address || '';
+        }
+        
+        // Save data when checkbox is checked
+        saveInfoCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                const formData = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    address: document.getElementById('address').value
+                };
+                localStorage.setItem('checkoutInfo', JSON.stringify(formData));
+            } else {
+                localStorage.removeItem('checkoutInfo');
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

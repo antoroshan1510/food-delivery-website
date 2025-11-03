@@ -1,0 +1,1436 @@
+{% extends "base.html" %}
+
+{% block title %}Subscription Plans - Crave Bite{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('subscription') }}">Subscription</a></li>
+{% endblock %}
+
+{% block content %}
+<section class="subscription-hero">
+    <div class="hero-content">
+        <h1>Delicious Meals Delivered to Your Door</h1>
+        <p>Save time and money with our convenient subscription options</p>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <span class="stat-number">100%</span>
+                <span class="stat-label">Fresh Ingredients</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">Free</span>
+                <span class="stat-label">Delivery</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">15%</span>
+                <span class="stat-label">Savings</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Plan Comparison Table -->
+<section class="plan-comparison">
+    <div class="container">
+        <div class="section-header text-center">
+            <h2>Compare Our Plans</h2>
+            <p class="subtitle">Find the perfect plan for your needs</p>
+        </div>
+        <div class="comparison-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Features</th>
+                        <th>Weekly</th>
+                        <th>Monthly</th>
+                        <th>Yearly</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Meals per period</td>
+                        <td>3/week</td>
+                        <td>3/month</td>
+                        <td>3/year</td>
+                    </tr>
+                    <tr>
+                        <td>Free Delivery</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                        <td>✓</td>
+                    </tr>
+                    <tr>
+                        <td>Menu Options</td>
+                        <td>15+</td>
+                        <td>20+</td>
+                        <td>25+</td>
+                    </tr>
+                    <tr>
+                        <td>Customization</td>
+                        <td>Basic</td>
+                        <td>Advanced</td>
+                        <td>Full</td>
+                    </tr>
+                    <tr>
+                        <td>Customer Support</td>
+                        <td>Standard</td>
+                        <td>Priority</td>
+                        <td>Premium</td>
+                    </tr>
+                    <tr>
+                        <td>Seasonal Menus</td>
+                        <td>✗</td>
+                        <td>✗</td>
+                        <td>✓</td>
+                    </tr>
+                    <tr>
+                        <td>Skip Weeks</td>
+                        <td>✗</td>
+                        <td>Up to 2/month</td>
+                        <td>Up to 8/year</td>
+                    </tr>
+                    <tr>
+                        <td>Savings</td>
+                        <td>-</td>
+                        <td>15%</td>
+                        <td>33%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section class="subscription-plans">
+    <div class="container">
+        <div class="section-header text-center">
+            <h2>Choose Your Perfect Plan</h2>
+            <p class="subtitle">Select the subscription plan that best fits your lifestyle</p>
+        </div>
+        
+        <div class="plans-grid">
+            {% for plan in plans %}
+            <div class="plan-card {% if plan.popular %}popular{% endif %}" data-plan-id="{{ plan.id }}">
+                {% if plan.popular %}
+                <div class="popular-badge">Most Popular</div>
+                {% endif %}
+                <div class="plan-header">
+                    <h3 class="plan-title">{{ plan.name }}</h3>
+                    <div class="plan-price-container">
+                        <div class="plan-price">
+                            <span class="current-price">₹{{ plan.price }}</span>
+                            <span class="period">/{{ plan.meals_period }}</span>
+                        </div>
+                        <div class="original-price">₹{{ plan.original_price }}</div>
+                    </div>
+                    <div class="savings-badge">Save ₹{{ plan.savings }}</div>
+                    <p class="plan-description">{{ plan.description }}</p>
+                </div>
+                <ul class="plan-features">
+                    {% for feature in plan.features %}
+                    <li class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <span class="feature-text">{{ feature }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <button class="btn plan-btn" data-plan="{{ plan.id }}" onclick="selectPlan('{{ plan.id }}')">Select Plan</button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Trial Offer -->
+<section class="trial-offer">
+    <div class="container">
+        <div class="trial-content">
+            <h2>Try Risk-Free for 7 Days</h2>
+            <p>Not sure which plan is right for you? Start with our 7-day trial and cancel anytime.</p>
+            <a href="#" class="btn btn-trial" onclick="selectTrialPlan()">Start Free Trial</a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <div class="section-header text-center">
+            <h2>Why Choose Our Subscription</h2>
+            <p class="subtitle">Experience the convenience and quality of our meal service</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <span>👨‍🍳</span>
+                </div>
+                <h3>Expert Chefs</h3>
+                <p>Our meals are crafted by professional chefs with years of culinary experience.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <span>🌱</span>
+                </div>
+                <h3>Fresh Ingredients</h3>
+                <p>We source only the freshest, highest quality ingredients for every meal.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <span>🚚</span>
+                </div>
+                <h3>Fast Delivery</h3>
+                <p>Hot meals delivered to your door within 45 minutes of preparation.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <span>🔄</span>
+                </div>
+                <h3>Flexible Plans</h3>
+                <p>Pause, skip, or cancel anytime with no commitment required.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="how-it-works">
+    <div class="container">
+        <div class="section-header text-center">
+            <h2>How It Works</h2>
+            <p class="subtitle">Simple steps to delicious meals at your doorstep</p>
+        </div>
+        <div class="steps-container">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Choose Your Plan</h3>
+                <p>Select the subscription plan that fits your needs</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Customize Your Preferences</h3>
+                <p>For all plans: Set your dietary preferences<br>
+                   Let us create a smart rotation based on your choices</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Enjoy Convenient Delivery</h3>
+                <p>We deliver fresh meals right to your doorstep</p>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <h3>Manage Your Subscription</h3>
+                <p>Pause, skip, or cancel anytime</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials">
+    <div class="container">
+        <div class="section-header text-center">
+            <h2>What Our Customers Say</h2>
+            <p class="subtitle">Read testimonials from our satisfied subscribers</p>
+        </div>
+        <div class="testimonials-container">
+            <div class="testimonial">
+                <div class="testimonial-content">
+                    "The subscription service has saved me so much time during the week. The meals are always fresh and delicious!"
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-image">SJ</div>
+                    <div class="author-info">
+                        <h4>Sarah Johnson</h4>
+                        <p>Monthly Subscriber</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial">
+                <div class="testimonial-content">
+                    "I've been on the yearly plan for two years now and I couldn't be happier. The variety keeps me excited about meals!"
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-image">MR</div>
+                    <div class="author-info">
+                        <h4>Michael Roberts</h4>
+                        <p>Yearly Subscriber</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial">
+                <div class="testimonial-content">
+                    "As a busy professional, this service has been a game-changer. Healthy, delicious meals without the hassle!"
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-image">EP</div>
+                    <div class="author-info">
+                        <h4>Emma Parker</h4>
+                        <p>Weekly Subscriber</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Kids Subscription CTA -->
+<section class="kids-cta">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Kids Meal Subscription</h2>
+            <p>Special nutritionally balanced meals designed specifically for children</p>
+            <a href="{{ url_for('kids_subscription') }}" class="btn btn-secondary">View Kids Plans</a>
+        </div>
+    </div>
+</section>
+
+<script>
+function selectPlan(planId) {
+    // Add animation effect to the selected plan
+    const planCard = document.querySelector(`[data-plan-id="${planId}"]`);
+    if (planCard) {
+        planCard.classList.add('selected-animation');
+        setTimeout(() => {
+            planCard.classList.remove('selected-animation');
+            // Redirect to subscription checkout with the selected plan
+            window.location.href = '/subscription_checkout?plan=' + planId;
+        }, 600);
+    } else {
+        // Redirect to subscription checkout with the selected plan
+        window.location.href = '/subscription_checkout?plan=' + planId;
+    }
+}
+
+function selectTrialPlan() {
+    // For demo purposes, select the monthly plan for trial
+    selectPlan('monthly');
+}
+</script>
+
+<style>
+/* Hero Section */
+.subscription-hero {
+    background: linear-gradient(135deg, #0a3d2f 0%, #1a5d45 100%);
+    color: white;
+    padding: 100px 0;
+    text-align: center;
+    margin-bottom: 60px;
+    position: relative;
+    overflow: hidden;
+}
+
+.subscription-hero::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+    transform: rotate(30deg);
+    animation: shine 8s infinite;
+}
+
+.subscription-hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    font-weight: 800;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    position: relative;
+    z-index: 2;
+    letter-spacing: -0.5px;
+}
+
+.subscription-hero p {
+    font-size: 1.4rem;
+    margin-bottom: 40px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    z-index: 2;
+    opacity: 0.9;
+    font-weight: 300;
+}
+
+.hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 2;
+}
+
+.stat-item {
+    text-align: center;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.stat-item:nth-child(1) { animation-delay: 0.1s; }
+.stat-item:nth-child(2) { animation-delay: 0.2s; }
+.stat-item:nth-child(3) { animation-delay: 0.3s; }
+
+.stat-number {
+    display: block;
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 5px;
+    color: #d4af37; /* Gold */
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    background: linear-gradient(135deg, #d4af37, #f8e08e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-label {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+/* Plan Comparison */
+.plan-comparison {
+    padding: 80px 0;
+    background: #f8f9fa;
+}
+
+.plan-comparison .section-header {
+    margin-bottom: 50px;
+}
+
+.comparison-table {
+    overflow-x: auto;
+}
+
+.comparison-table table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.comparison-table th,
+.comparison-table td {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.comparison-table th {
+    background: linear-gradient(135deg, #0a3d2f 0%, #1a5d45 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.comparison-table td {
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.comparison-table tr:last-child td {
+    border-bottom: none;
+}
+
+.comparison-table tr:nth-child(even) {
+    background: rgba(248, 249, 250, 0.5);
+}
+
+.comparison-table .check {
+    color: #0a3d2f;
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+
+/* Trial Offer */
+.trial-offer {
+    padding: 80px 0;
+    background: linear-gradient(135deg, #e8f5e9 0%, #d4edda 100%);
+}
+
+.trial-content {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.trial-content h2 {
+    font-size: 2.5rem;
+    color: #0a3d2f;
+    margin-bottom: 20px;
+    font-weight: 800;
+}
+
+.trial-content p {
+    font-size: 1.3rem;
+    color: #333;
+    margin-bottom: 40px;
+    line-height: 1.7;
+}
+
+.btn-trial {
+    background: linear-gradient(135deg, #0a3d2f 0%, #1a5d45 100%);
+    color: white;
+    border: none;
+    padding: 20px 50px;
+    border-radius: 15px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 12px 35px rgba(10, 61, 47, 0.4);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-trial::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.4), transparent);
+    transition: 0.6s;
+}
+
+.btn-trial:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 40px rgba(10, 61, 47, 0.6);
+}
+
+.btn-trial:hover::before {
+    left: 100%;
+}
+
+/* Plans Grid */
+.plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 40px;
+    margin-top: 50px;
+    perspective: 1000px;
+}
+
+.plan-card {
+    background: white;
+    border-radius: 25px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    padding: 45px 35px;
+    position: relative;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    border: 2px solid transparent;
+    transform-style: preserve-3d;
+    overflow: hidden;
+    background: linear-gradient(145deg, #ffffff, #f8f9fa);
+    z-index: 1;
+    cursor: pointer;
+}
+
+.plan-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(10, 61, 47, 0.08) 0%, rgba(212, 175, 55, 0.08) 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: -1;
+    border-radius: 25px;
+}
+
+.plan-card::after {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, #0a3d2f, #d4af37, #0a3d2f);
+    z-index: -2;
+    border-radius: 27px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.plan-card:hover {
+    transform: translateY(-20px) scale(1.03);
+    box-shadow: 0 30px 80px rgba(10, 61, 47, 0.3);
+    border-color: transparent;
+}
+
+.plan-card:hover::before {
+    opacity: 1;
+}
+
+.plan-card:hover::after {
+    opacity: 1;
+    animation: borderAnimation 3s linear infinite;
+}
+
+.plan-card.popular {
+    transform: scale(1.08);
+    background: linear-gradient(145deg, #ffffff, #f0f8f0);
+    box-shadow: 0 25px 70px rgba(10, 61, 47, 0.25);
+}
+
+.plan-card.popular:hover {
+    transform: translateY(-20px) scale(1.1);
+}
+
+.plan-card.popular::after {
+    opacity: 1;
+    animation: borderAnimation 3s linear infinite;
+}
+
+.plan-card.selected {
+    transform: scale(1.05);
+    box-shadow: 0 25px 80px rgba(10, 61, 47, 0.4);
+    border: 2px solid #d4af37;
+}
+
+.selected-animation {
+    animation: selectPlan 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes selectPlan {
+    0% { transform: scale(1); box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1); }
+    30% { transform: scale(0.95); box-shadow: 0 5px 20px rgba(10, 61, 47, 0.3); }
+    70% { transform: scale(1.05); }
+    100% { transform: scale(1); box-shadow: 0 15px 50px rgba(10, 61, 47, 0.2); }
+}
+
+@keyframes borderAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.popular-badge {
+    position: absolute;
+    top: -15px;
+    right: 30px;
+    background: linear-gradient(135deg, #d4af37 0%, #0a3d2f 100%);
+    color: white;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 700;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    animation: pulse 2s infinite;
+    font-size: 0.9rem;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); }
+    50% { transform: scale(1.05); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4); }
+    100% { transform: scale(1); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); }
+}
+
+.plan-title {
+    color: #333;
+    font-size: 2rem;
+    margin-bottom: 25px;
+    text-align: center;
+    font-weight: 800;
+    position: relative;
+    padding-bottom: 20px;
+    letter-spacing: -0.5px;
+}
+
+.plan-title::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70px;
+    height: 4px;
+    background: linear-gradient(90deg, #0a3d2f, #d4af37);
+    border-radius: 4px;
+}
+
+.plan-price-container {
+    text-align: center;
+    margin-bottom: 25px;
+    padding: 25px;
+    background: rgba(10, 61, 47, 0.05);
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.plan-price-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(10, 61, 47, 0.1) 100%);
+    opacity: 0.5;
+}
+
+.plan-price {
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 2;
+}
+
+.current-price {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: #0a3d2f;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    background: linear-gradient(135deg, #0a3d2f, #1a5d45);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.period {
+    font-size: 1.2rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.original-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 1.4rem;
+    font-weight: 500;
+}
+
+.savings-badge {
+    background: linear-gradient(135deg, #e8f5e9 0%, #d4edda 100%);
+    color: #0a3d2f;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: inline-block;
+    margin-bottom: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    border: 2px solid rgba(10, 61, 47, 0.1);
+}
+
+.plan-description {
+    color: #555;
+    text-align: center;
+    margin-bottom: 30px;
+    min-height: 80px;
+    font-size: 1.2rem;
+    line-height: 1.7;
+    font-weight: 400;
+}
+
+.meals-info {
+    text-align: center;
+    margin-bottom: 35px;
+    padding: 25px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(10, 61, 47, 0.15) 100%);
+    border-radius: 20px;
+    border: 2px dashed #0a3d2f;
+    position: relative;
+    overflow: hidden;
+}
+
+.meals-info::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%);
+    background-size: 200% 200%;
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.meals-count {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #0a3d2f;
+    background: linear-gradient(135deg, #0a3d2f, #1a5d45);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.meals-label {
+    color: #555;
+    display: block;
+    font-size: 1.2rem;
+    margin-top: 10px;
+    font-weight: 500;
+}
+
+.plan-features {
+    list-style: none;
+    padding: 0;
+    margin: 40px 0;
+    background: rgba(248, 249, 250, 0.8);
+    border-radius: 20px;
+    padding: 25px;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.feature-item {
+    padding: 18px 0;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-item:hover {
+    transform: translateX(8px);
+    background: rgba(212, 175, 55, 0.15);
+    border-radius: 12px;
+    padding-left: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.feature-item:last-child {
+    border-bottom: none;
+}
+
+.feature-icon {
+    color: #0a3d2f;
+    font-weight: bold;
+    margin-right: 20px;
+    font-size: 1.5rem;
+    min-width: 40px;
+    text-align: center;
+    animation: checkmarkPop 0.4s ease-out;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(10, 61, 47, 0.3) 100%);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover .feature-icon {
+    transform: scale(1.2) rotate(10deg);
+    background: linear-gradient(135deg, #d4af37 0%, #0a3d2f 100%);
+    color: white;
+    box-shadow: 0 5px 15px rgba(10, 61, 47, 0.3);
+}
+
+@keyframes checkmarkPop {
+    0% { transform: scale(0) rotate(-180deg); }
+    70% { transform: scale(1.2) rotate(20deg); }
+    100% { transform: scale(1) rotate(0); }
+}
+
+.feature-text {
+    color: #333;
+    flex: 1;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+.plan-btn {
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(135deg, #0a3d2f 0%, #1a5d45 100%);
+    color: white;
+    border: none;
+    border-radius: 15px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(10, 61, 47, 0.4);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.plan-btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: 0.6s;
+}
+
+.plan-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(10, 61, 47, 0.6);
+}
+
+.plan-btn:hover::before {
+    left: 100%;
+}
+
+.plan-btn:active {
+    transform: translateY(0);
+}
+
+/* Features Section */
+.features-section {
+    padding: 120px 0;
+    background: #f8f9fa;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 50px;
+    margin-top: 70px;
+}
+
+.feature-card {
+    background: white;
+    padding: 50px 35px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid transparent;
+}
+
+.feature-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(10, 61, 47, 0.03) 0%, rgba(212, 175, 55, 0.03) 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.feature-card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #0a3d2f, #d4af37);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-15px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    border-color: rgba(10, 61, 47, 0.1);
+}
+
+.feature-card:hover::before {
+    opacity: 1;
+}
+
+.feature-card:hover::after {
+    transform: scaleX(1);
+}
+
+.feature-icon {
+    font-size: 4rem;
+    margin-bottom: 30px;
+    display: block;
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    background: linear-gradient(135deg, #0a3d2f, #1a5d45);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.feature-card:hover .feature-icon {
+    transform: scale(1.15) rotate(5deg);
+}
+
+.feature-card h3 {
+    color: #333;
+    margin-bottom: 25px;
+    font-size: 1.7rem;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+}
+
+.feature-card p {
+    color: #555;
+    line-height: 1.8;
+    font-size: 1.15rem;
+    font-weight: 400;
+}
+
+/* How It Works */
+.how-it-works {
+    padding: 120px 0;
+}
+
+.steps-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 50px;
+    margin-top: 70px;
+}
+
+.step {
+    text-align: center;
+    position: relative;
+    padding: 40px 25px;
+    border-radius: 20px;
+    transition: all 0.4s ease;
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.step:hover {
+    background: rgba(10, 61, 47, 0.08);
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.step-number {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #0a3d2f 0%, #1a5d45 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0 auto 30px;
+    box-shadow: 0 8px 25px rgba(10, 61, 47, 0.4);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.step-number::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #d4af37 0%, #0a3d2f 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.step:hover .step-number {
+    transform: scale(1.15) rotate(10deg);
+    box-shadow: 0 12px 30px rgba(10, 61, 47, 0.6);
+}
+
+.step:hover .step-number::before {
+    opacity: 1;
+}
+
+.step h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+}
+
+.step p {
+    color: #555;
+    font-size: 1.15rem;
+    line-height: 1.7;
+    font-weight: 400;
+}
+
+/* Testimonials */
+.testimonials {
+    padding: 120px 0;
+    background: #f8f9fa;
+}
+
+.testimonials-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 50px;
+    margin-top: 70px;
+}
+
+.testimonial {
+    background: white;
+    padding: 45px;
+    border-radius: 25px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    position: relative;
+    transition: all 0.4s ease;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.testimonial:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+}
+
+.testimonial-content {
+    font-style: italic;
+    color: #333;
+    margin-bottom: 30px;
+    line-height: 1.8;
+    position: relative;
+    font-size: 1.2rem;
+    font-weight: 400;
+}
+
+.testimonial-content::before {
+    content: "\"";
+    font-size: 6rem;
+    position: absolute;
+    top: -40px;
+    left: -20px;
+    color: #0a3d2f;
+    opacity: 0.1;
+    font-family: Georgia, serif;
+}
+
+.testimonial-content::after {
+    content: "\"";
+    font-size: 6rem;
+    position: absolute;
+    bottom: -60px;
+    right: -20px;
+    color: #0a3d2f;
+    opacity: 0.1;
+    font-family: Georgia, serif;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+}
+
+.author-image {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #0a3d2f 0%, #1a5d45 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.5rem;
+    margin-right: 25px;
+    box-shadow: 0 8px 25px rgba(10, 61, 47, 0.4);
+    transition: all 0.4s ease;
+}
+
+.testimonial:hover .author-image {
+    transform: scale(1.1);
+    box-shadow: 0 12px 30px rgba(10, 61, 47, 0.6);
+}
+
+.author-info h4 {
+    color: #333;
+    margin: 0 0 8px 0;
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+.author-info p {
+    color: #666;
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+/* Kids CTA */
+.kids-cta {
+    padding: 120px 0;
+    background: linear-gradient(135deg, #0a3d2f 0%, #1a5d45 100%);
+    color: white;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.kids-cta::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+    animation: shine 8s infinite;
+}
+
+.cta-content h2 {
+    font-size: 3.5rem;
+    margin-bottom: 30px;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    letter-spacing: -1px;
+}
+
+.cta-content p {
+    font-size: 1.5rem;
+    margin-bottom: 50px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.95;
+    font-weight: 300;
+}
+
+.btn-secondary {
+    background: white;
+    color: #0a3d2f;
+    border: none;
+    padding: 22px 50px;
+    border-radius: 15px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-secondary::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.4), transparent);
+    transition: 0.6s;
+}
+
+.btn-secondary:hover {
+    background: #f0f0f0;
+    transform: translateY(-5px);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.4);
+}
+
+.btn-secondary:hover::before {
+    left: 100%;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shine {
+    0% { transform: rotate(30deg) translate(-15%, -15%); }
+    50% { transform: rotate(30deg) translate(0%, 0%); }
+    100% { transform: rotate(30deg) translate(15%, 15%); }
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .subscription-hero h1 {
+        font-size: 3rem;
+    }
+    
+    .subscription-hero p {
+        font-size: 1.2rem;
+    }
+    
+    .stat-number {
+        font-size: 2.3rem;
+    }
+    
+    .plans-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 35px;
+    }
+    
+    .current-price {
+        font-size: 3rem;
+    }
+    
+    .plan-card.popular {
+        transform: scale(1.05);
+    }
+    
+    .plan-card.popular:hover {
+        transform: translateY(-20px) scale(1.08);
+    }
+    
+    .comparison-table th,
+    .comparison-table td {
+        padding: 15px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .subscription-hero {
+        padding: 80px 0;
+    }
+    
+    .subscription-hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .subscription-hero p {
+        font-size: 1.1rem;
+    }
+    
+    .hero-stats {
+        gap: 30px;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+    
+    .stat-label {
+        font-size: 1rem;
+    }
+    
+    .plans-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .plan-card.popular {
+        transform: scale(1);
+    }
+    
+    .plan-card.popular:hover {
+        transform: translateY(-20px) scale(1.03);
+    }
+    
+    .steps-container {
+        grid-template-columns: 1fr;
+        gap: 35px;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 35px;
+    }
+    
+    .testimonials-container {
+        grid-template-columns: 1fr;
+        gap: 35px;
+    }
+    
+    .cta-content h2 {
+        font-size: 2.8rem;
+    }
+    
+    .cta-content p {
+        font-size: 1.2rem;
+    }
+    
+    .comparison-table {
+        font-size: 0.8rem;
+    }
+    
+    .comparison-table th,
+    .comparison-table td {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .subscription-hero {
+        padding: 60px 0;
+    }
+    
+    .subscription-hero h1 {
+        font-size: 2.2rem;
+    }
+    
+    .hero-stats {
+        flex-direction: column;
+        gap: 25px;
+    }
+    
+    .plan-card {
+        padding: 35px 25px;
+    }
+    
+    .current-price {
+        font-size: 2.5rem;
+    }
+    
+    .popular-badge {
+        top: -12px;
+        right: 20px;
+        padding: 10px 25px;
+        font-size: 0.85rem;
+    }
+    
+    .plan-title {
+        font-size: 1.7rem;
+    }
+    
+    .cta-content h2 {
+        font-size: 2.2rem;
+    }
+    
+    .cta-content p {
+        font-size: 1.1rem;
+    }
+    
+    .btn-secondary {
+        padding: 18px 40px;
+        font-size: 1.2rem;
+    }
+    
+    .btn-trial {
+        padding: 18px 40px;
+        font-size: 1.2rem;
+    }
+    
+    .trial-content h2 {
+        font-size: 2rem;
+    }
+    
+    .trial-content p {
+        font-size: 1.1rem;
+    }
+}
+</style>
+{% endblock %}

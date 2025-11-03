@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Crave Bite{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="auth-container">
+        <h2>Welcome Back</h2>
+        <p>Log in to your Crave Bite account to continue.</p>
+        
+        {% if error %}
+        <div class="error-message">
+            <p>{{ error }}</p>
+        </div>
+        {% endif %}
+        
+        <form id="login-form" class="auth-form" method="POST" action="{{ url_for('login') }}">
+            <div class="form-group">
+                <label for="username">Username or Email</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            
+            <div class="form-group password-group">
+                <label for="password">Password</label>
+                <div class="password-input-container">
+                    <input type="password" id="password" name="password" required>
+                    <button type="button" class="toggle-password" aria-label="Show password">
+                        <i class="eye-icon">👁</i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="remember-forgot">
+                    <label class="remember">
+                        <input type="checkbox" name="remember"> Remember me
+                    </label>
+                    <a href="{{ url_for('forgot_password') }}" class="forgot-password">Forgot password?</a>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn auth-btn" id="login-btn">
+                <span class="btn-text">Log In</span>
+                <span class="loading-spinner" style="display: none;"></span>
+            </button>
+        </form>
+        
+        <div class="social-login">
+            <p class="divider"><span>or continue with</span></p>
+            <div class="social-buttons">
+                <button class="social-btn google">
+                    <i class="social-icon">G</i> Google
+                </button>
+                <button class="social-btn facebook">
+                    <i class="social-icon">f</i> Facebook
+                </button>
+            </div>
+        </div>
+        
+        <div class="auth-footer">
+            <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign up</a></p>
+        </div>
+    </div>
+</section>
+
+<style>
+.password-input-container {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+}
+
+.social-login {
+    margin: 20px 0;
+}
+
+.divider {
+    text-align: center;
+    position: relative;
+    margin: 20px 0;
+}
+
+.divider::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: #ddd;
+    z-index: 1;
+}
+
+.divider span {
+    background: white;
+    position: relative;
+    z-index: 2;
+    padding: 0 10px;
+}
+
+.social-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.social-btn {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+}
+
+.social-btn:hover {
+    background: #f5f5f5;
+}
+
+.social-btn.google:hover {
+    background: #f1f1f1;
+}
+
+.social-btn.facebook:hover {
+    background: #f1f1f1;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle password visibility
+    const togglePassword = document.querySelector('.toggle-password');
+    const passwordInput = document.getElementById('password');
+    
+    if (togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.querySelector('.eye-icon').textContent = type === 'password' ? '👁' : '🔒';
+        });
+    }
+    
+    // Form submission with loading state
+    const loginForm = document.getElementById('login-form');
+    const loginBtn = document.getElementById('login-btn');
+    const btnText = loginBtn.querySelector('.btn-text');
+    const spinner = loginBtn.querySelector('.loading-spinner');
+    
+    loginForm.addEventListener('submit', function() {
+        // Show loading state
+        btnText.style.display = 'none';
+        spinner.style.display = 'inline-block';
+        loginBtn.disabled = true;
+    });
+});
+</script>
+{% endblock %}

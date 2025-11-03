@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section with Statistics -->
+<section class="hero">
+    <div class="hero-slider">
+        <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1484980972926-edee96e0960d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80');" loading="lazy"></div>
+        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1515548-1049043-5b19c13296f8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80');" loading="lazy"></div>
+        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80');" loading="lazy"></div>
+        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80');" loading="lazy"></div>
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="hero-badge">DELIVERY IN 30 MINUTES</div>
+        <h2>Delicious Food Delivered to Your Doorstep</h2>
+        <p>Experience the best food delivery service with our wide selection of restaurants and delicious dishes.</p>
+        <div class="hero-stats">
+            <div class="stat">
+                <span class="stat-number">10,000+</span>
+                <span class="stat-label">Happy Customers</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">50+</span>
+                <span class="stat-label">Restaurants</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">24/7</span>
+                <span class="stat-label">Delivery</span>
+            </div>
+        </div>
+        <div class="hero-buttons">
+            <a href="{{ url_for('restaurants') }}" class="btn btn-primary">Order Now</a>
+            <a href="{{ url_for('subscription') }}" class="btn btn-secondary">View Plans</a>
+        </div>
+        <div class="hero-image-grid">
+            <div class="hero-image-item">
+                <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Delicious Pizza">
+            </div>
+            <div class="hero-image-item">
+                <img src="https://images.unsplash.com/photo-1515548-1049043-5b19c13296f8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Fresh Salad">
+            </div>
+            <div class="hero-image-item">
+                <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Tasty Burger">
+            </div>
+        </div>
+    </div>
+    <div class="slider-controls">
+        <button class="prev-btn">❮</button>
+        <button class="next-btn">❯</button>
+    </div>
+    <div class="slider-dots">
+        <span class="dot active" data-slide="0"></span>
+        <span class="dot" data-slide="1"></span>
+        <span class="dot" data-slide="2"></span>
+        <span class="dot" data-slide="3"></span>
+    </div>
+    <!-- Floating elements for enhanced visual appeal -->
+    <div class="floating-elements">
+        <div class="floating-element floating-element-1">🍔</div>
+        <div class="floating-element floating-element-2">🍕</div>
+        <div class="floating-element floating-element-3">🥗</div>
+        <div class="floating-element floating-element-4">🍰</div>
+        <div class="floating-element floating-element-5">🍜</div>
+        <div class="floating-element floating-element-6">🍱</div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <div class="section-header">
+            <h2>Why Choose Crave Bite</h2>
+            <p>Discover what makes us the preferred choice for food delivery</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <div class="icon-placeholder">⏱️</div>
+                </div>
+                <h3>Fast Delivery</h3>
+                <p>Quick and reliable delivery service right to your doorstep.</p>
+                <div class="feature-image">
+                    <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Fast Delivery">
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <div class="icon-placeholder">🌱</div>
+                </div>
+                <h3>Fresh Ingredients</h3>
+                <p>We use only the freshest ingredients in all our dishes.</p>
+                <div class="feature-image">
+                    <img src="https://images.unsplash.com/photo-1515548-1049043-5b19c13296f8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Fresh Ingredients">
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <div class="icon-placeholder">📱</div>
+                </div>
+                <h3>Easy Ordering</h3>
+                <p>Simple and intuitive ordering process from your device.</p>
+                <div class="feature-image">
+                    <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="Easy Ordering">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works-home">
+    <div class="container">
+        <div class="section-header">
+            <h2>How It Works</h2>
+            <p>Get your delicious food in just a few simple steps</p>
+        </div>
+        <div class="steps-container">
+            <div class="step-card">
+                <div class="step-icon-container">
+                    <div class="step-icon">1</div>
+                </div>
+                <div class="step-content">
+                    <h3>Choose Your Restaurant</h3>
+                    <p>Browse our restaurants and select your favorite one.</p>
+                </div>
+                <div class="step-visual">
+                    <div class="visual-placeholder">🍔</div>
+                </div>
+            </div>
+            <div class="step-card">
+                <div class="step-icon-container">
+                    <div class="step-icon">2</div>
+                </div>
+                <div class="step-content">
+                    <h3>Place Your Order</h3>
+                    <p>Select dishes from restaurant menu and proceed to checkout.</p>
+                </div>
+                <div class="step-visual">
+                    <div class="visual-placeholder">🛒</div>
+                </div>
+            </div>
+            <div class="step-card">
+                <div class="step-icon-container">
+                    <div class="step-icon">3</div>
+                </div>
+                <div class="step-content">
+                    <h3>Fast Delivery</h3>
+                    <p>We'll deliver your food fresh and hot to your door.</p>
+                </div>
+                <div class="step-visual">
+                    <div class="visual-placeholder">🚚</div>
+                </div>
+            </div>
+            <div class="step-card">
+                <div class="step-icon-container">
+                    <div class="step-icon">4</div>
+                </div>
+                <div class="step-content">
+                    <h3>Enjoy Your Meal</h3>
+                    <p>Sit back, relax, and enjoy your delicious meal.</p>
+                </div>
+                <div class="step-visual">
+                    <div class="visual-placeholder">😊</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials">
+    <div class="container">
+        <div class="section-header">
+            <h2>What Our Customers Say</h2>
+            <p>Read testimonials from our satisfied customers</p>
+        </div>
+        <div class="testimonial-container">
+            <div class="testimonial-card">
+                <div class="testimonial-rating">
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                </div>
+                <div class="testimonial-content">
+                    "The food was absolutely delicious and delivered right on time. The quality is consistently excellent!"
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-image">
+                        <div class="image-placeholder-author">JD</div>
+                    </div>
+                    <div class="author-info">
+                        <h4>John Doe</h4>
+                        <p>Regular Customer</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-rating">
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                    <span class="star">★</span>
+                </div>
+                <div class="testimonial-content">
+                    "Their subscription service has saved me so much time during the week. Highly recommended!"
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-image">
+                        <div class="image-placeholder-author">SJ</div>
+                    </div>
+                    <div class="author-info">
+                        <h4>Sarah Johnson</h4>
+                        <p>Monthly Subscriber</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter Section -->
+<section class="newsletter">
+    <div class="container">
+        <div class="newsletter-content">
+            <h2>Stay Updated</h2>
+            <p>Subscribe to our newsletter for the latest updates, special offers, and new menu items.</p>
+            <form class="newsletter-form">
+                <input type="email" placeholder="Enter your email address" required>
+                <button type="submit">Subscribe</button>
+            </form>
+            <div class="social-icons">
+                <a href="#" class="social-icon">f</a>
+                <a href="#" class="social-icon">t</a>
+                <a href="#" class="social-icon">in</a>
+                <a href="#" class="social-icon">ig</a>
+            </div>
+        </div>
+        <div class="newsletter-visual">
+            <div class="visual-element">
+                <div class="image-placeholder-lg">📧</div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+{% endblock %}

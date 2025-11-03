@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Testimonials - Crave Bite{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('testimonials') }}">Testimonials</a></li>
+{% endblock %}
+
+{% block content %}
+<section class="testimonials-page">
+    <div class="container">
+        <div class="section-header">
+            <h2>What Our Customers Say</h2>
+            <p>Read testimonials from our satisfied customers</p>
+        </div>
+        
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"The food quality is exceptional and delivery is always on time. I've been ordering for over a year and never been disappointed!"</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-image">JD</div>
+                    <div class="author-info">
+                        <h4>John Doe</h4>
+                        <p>Regular Customer</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"The subscription service has saved me so much time during busy weeks. The meals are healthy, delicious, and perfectly portioned."</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-image">SJ</div>
+                    <div class="author-info">
+                        <h4>Sarah Johnson</h4>
+                        <p>Monthly Subscriber</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"I love how they support local farmers and have sustainability initiatives. It feels good to order from a company that cares about the community."</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-image">MR</div>
+                    <div class="author-info">
+                        <h4>Mike Rodriguez</h4>
+                        <p>Eco-Conscious Customer</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"The variety in their menu is impressive. There's something for everyone in my family, from kids to adults with specific dietary needs."</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-image">EW</div>
+                    <div class="author-info">
+                        <h4>Emily Wilson</h4>
+                        <p>Family Account Holder</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"Their customer service is outstanding. When I had an issue with my order, they resolved it immediately and even threw in a free dessert!"</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-image">TP</div>
+                    <div class="author-info">
+                        <h4>Thomas Parker</h4>
+                        <p>New Customer</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"As a busy professional, I appreciate how easy it is to order and customize my meals. The mobile app is intuitive and user-friendly."</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-image">LC</div>
+                    <div class="author-info">
+                        <h4>Lisa Chen</h4>
+                        <p>App User</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="cta-section">
+            <h3>Share Your Experience</h3>
+            <p>Have you tried our service? We'd love to hear from you!</p>
+            <a href="{{ url_for('contact') }}" class="btn">Leave a Review</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

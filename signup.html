@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up - Crave Bite{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="auth-container">
+        <h2>Create Account</h2>
+        <p>Join Crave Bite to order delicious meals and manage your subscriptions.</p>
+        
+        {% if error %}
+        <div class="error-message">
+            <p>{{ error }}</p>
+        </div>
+        {% endif %}
+        
+        <form id="signup-form" class="auth-form" method="POST" action="{{ url_for('signup') }}">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="role">Role</label>
+                <select id="role" name="role" required>
+                    <option value="">Select your role</option>
+                    <option value="customer">Customer - Order meals and manage subscriptions</option>
+                    <option value="owner">Restaurant Owner - Manage your restaurant and menu</option>
+                    <option value="delivery">Delivery Partner - Deliver orders to customers</option>
+                </select>
+            </div>
+            
+            <div class="form-group password-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+                <div class="password-requirements">
+                    <p>Password must contain:</p>
+                    <ul>
+                        <li id="length" class="requirement invalid">At least 8 characters</li>
+                        <li id="uppercase" class="requirement invalid">At least one uppercase letter</li>
+                        <li id="lowercase" class="requirement invalid">At least one lowercase letter</li>
+                        <li id="number" class="requirement invalid">At least one number</li>
+                        <li id="special" class="requirement invalid">At least one special character</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="form-group password-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+                <div id="password-match" class="password-match"></div>
+            </div>
+            
+            <button type="submit" class="btn auth-btn" id="submit-btn">Sign Up</button>
+        </form>
+        
+        <div class="auth-footer">
+            <p>Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+        </div>
+    </div>
+</section>
+
+<style>
+.auth-section {
+    padding: 2rem 0;
+    background-color: #f8f9fa;
+}
+
+.auth-container {
+    max-width: 500px;
+    margin: 0 auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+.password-group {
+    position: relative;
+}
+
+.password-requirements {
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    font-size: 0.875rem;
+}
+
+.password-requirements ul {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+}
+
+.password-requirements li {
+    margin-bottom: 0.25rem;
+}
+
+.password-requirements li:last-child {
+    margin-bottom: 0;
+}
+
+.requirement.valid::before {
+    content: "✓ ";
+    color: #28a745;
+}
+
+.requirement.invalid::before {
+    content: "○ ";
+    color: #6c757d;
+}
+
+.password-match {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.password-match.match {
+    color: #28a745;
+}
+
+.password-match.nomatch {
+    color: #dc3545;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.auth-btn {
+    width: 100%;
+    background-color: #28a745;
+}
+
+.auth-btn:hover {
+    background-color: #218838;
+}
+
+.auth-btn:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const signupForm = document.getElementById('signup-form');
+    const submitBtn = document.getElementById('submit-btn');
+    
+    if (signupForm) {
+        signupForm.addEventListener('submit', function(e) {
+            console.log('Form submission started');
+            
+            // Get form data
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const role = document.getElementById('role').value;
+            
+            // Basic validation
+            if (!username || !email || !password || !confirmPassword || !role) {
+                e.preventDefault();
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('Passwords do not match');
+                return;
+            }
+            
+            // Show loading state
+            if (submitBtn) {
+                submitBtn.textContent = 'Creating Account...';
+                submitBtn.disabled = true;
+            }
+            
+            console.log('Form submitted with data:', { username, email, password, confirmPassword, role });
+            // Allow form to submit normally - don't prevent default unless there's an error
+        });
+    }
+});
+</script>
+{% endblock %}

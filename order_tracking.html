@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block title %}Order Tracking - Crave Bite{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+<li class="breadcrumb-item"><a href="{{ url_for('order_tracking') }}">Order Tracking</a></li>
+{% endblock %}
+
+{% block content %}
+<section class="tracking-hero minimal">
+    <div class="container">
+        <div class="hero-content">
+            <h2>Order Tracking</h2>
+            <p>Auto-tracking your latest order</p>
+        </div>
+    </div>
+</section>
+
+<section class="tracking-section">
+    <div class="container">
+        <div class="tracking-container">
+            <!-- Auto-tracking information (shown by default) -->
+            <div class="tracking-info" id="tracking-info">
+                <div class="tracking-visualization card-ui">
+                    <div class="tracking-header top-summary">
+                        <div class="summary-item">
+                            <div class="summary-label">Estimated Time</div>
+                            <div class="summary-value" id="estimated-time-top">30 minutes</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label">Order Number</div>
+                            <div class="summary-value">#<span id="display-order-id">FC-12345</span></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Vertical timeline matching reference image -->
+                    <div class="v-timeline">
+                        <div class="v-line"><div class="v-line-fill" id="v-line-fill"></div></div>
+                        <div class="v-step" id="vt-placed">
+                            <div class="v-dot"></div>
+                            <div class="v-content">
+                                <div class="v-row">
+                                    <div class="v-icon">
+                                        <!-- document icon -->
+                                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#2c3e50" stroke-width="1.5"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6M9 9h2"/></svg>
+                                    </div>
+                                    <div>
+                                        <div class="v-title">Order Placed</div>
+                                        <div class="v-desc">We have received your order.</div>
+                                    </div>
+                                </div>
+                                <div class="v-time" id="date-ordered"></div>
+                            </div>
+                        </div>
+                        <div class="v-step" id="vt-confirmed">
+                            <div class="v-dot"></div>
+                            <div class="v-content">
+                                <div class="v-row">
+                                    <div class="v-icon">
+                                        <!-- shield icon -->
+                                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#2c3e50" stroke-width="1.5"><path d="M12 3l7 4v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V7l7-4z"/></svg>
+                                    </div>
+                                    <div>
+                                        <div class="v-title">Order Confirmed</div>
+                                        <div class="v-desc">Your order has been confirmed.</div>
+                                    </div>
+                                </div>
+                                <div class="v-time" id="date-preparing"></div>
+                            </div>
+                        </div>
+                        <div class="v-step" id="vt-processed">
+                            <div class="v-dot"></div>
+                            <div class="v-content">
+                                <div class="v-row">
+                                    <div class="v-icon">
+                                        <!-- chef icon -->
+                                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#2c3e50" stroke-width="1.5"><path d="M8 15v3h8v-3"/><path d="M6 10a3 3 0 0 1 3-3 3.5 3.5 0 0 1 6 0 3 3 0 0 1 3 3"/><path d="M9 15v-2a3 3 0 0 1 6 0v2"/></svg>
+                                    </div>
+                                    <div>
+                                        <div class="v-title active">Order Processed</div>
+                                        <div class="v-desc">We are preparing your order.</div>
+                                    </div>
+                                </div>
+                                <div class="v-time" id="date-cooking"></div>
+                            </div>
+                        </div>
+                        <div class="v-step" id="vt-ready">
+                            <div class="v-dot"></div>
+                            <div class="v-content">
+                                <div class="v-row">
+                                    <div class="v-icon">
+                                        <!-- truck/gift placeholder icon -->
+                                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#2c3e50" stroke-width="1.5"><path d="M3 12h13l3 3v5H3z"/><circle cx="7" cy="20" r="2"/><circle cx="17" cy="20" r="2"/></svg>
+                                    </div>
+                                    <div>
+                                        <div class="v-title muted">Ready to Pickup</div>
+                                        <div class="v-desc">Your order is ready for pickup.</div>
+                                    </div>
+                                </div>
+                                <div class="v-time" id="date-out-for-delivery"></div>
+                            </div>
+                        </div>
+                        <div class="v-step" id="vt-delivered">
+                            <div class="v-dot"></div>
+                            <div class="v-content">
+                                <div class="v-row">
+                                    <div class="v-icon">
+                                        <!-- gift icon -->
+                                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#2c3e50" stroke-width="1.5"><path d="M3 8h18v4H3z"/><path d="M12 8v13"/><path d="M3 12h18v9H3z"/><path d="M8 8c-1.5 0-2.5-1-2.5-2.5S7 3 8.5 4.5L12 8"/><path d="M16 8c1.5 0 2.5-1 2.5-2.5S17 3 15.5 4.5L12 8"/></svg>
+                                    </div>
+                                    <div>
+                                        <div class="v-title muted">Delivered</div>
+                                        <div class="v-desc">Enjoy your meal!</div>
+                                    </div>
+                                </div>
+                                <div class="v-time" id="date-delivered"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tracking-details">
+                        <div class="tracking-status">
+                            <h4>Current Status</h4>
+                            <span class="status-badge preparing" id="status-badge">Order Confirmed</span>
+                            <p id="status-description">Your meal order has been confirmed and is being prepared with fresh ingredients.</p>
+                            <p class="estimated-time" id="estimated-time">Estimated delivery: 30-45 minutes</p>
+                        </div>
+                        
+                        <div class="tracking-order-items">
+                            <h4>Your Delicious Meal Items</h4>
+                            <div class="items-list" id="items-list">
+                                <!-- Items will be populated by JavaScript -->
+                            </div>
+                            <div class="order-total">
+                                <span>Total:</span>
+                                <span id="order-total"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="meal-quality-info">
+                    <h4>Meal Quality Assurance</h4>
+                    <div class="quality-indicators">
+                        <div class="quality-item">
+                            <span class="quality-icon">🌡️</span>
+                            <span class="quality-label">Temperature</span>
+                            <span class="quality-value" id="meal-temperature">Hot and fresh</span>
+                        </div>
+                        <div class="quality-item">
+                            <span class="quality-icon">📦</span>
+                            <span class="quality-label">Packaging</span>
+                            <span class="quality-value" id="meal-packaging">Eco-friendly packaging</span>
+                        </div>
+                        <div class="quality-item">
+                            <span class="quality-icon">⭐</span>
+                            <span class="quality-label">Special Instructions</span>
+                            <span class="quality-value" id="meal-instructions">Extra napkins included</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="driver-info">
+                    <h4>Delivery Information</h4>
+                    <div class="driver-details">
+                        <div class="driver-avatar" id="driver-avatar">JS</div>
+                        <div>
+                            <div class="driver-name" id="driver-name">John Smith</div>
+                            <div class="driver-phone" id="driver-phone">(555) 123-4567</div>
+                        </div>
+                    </div>
+                    <div class="vehicle-info" id="vehicle-info">Toyota Camry - ABC123</div>
+                    <div class="map-container">
+                        <div id="driver-map" style="height: 300px; width: 100%; border-radius: 8px; overflow: hidden;"></div>
+                        <div class="map-controls">
+                            <button class="btn secondary" id="refresh-location">Refresh Location</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tracking-actions">
+                    <button class="btn secondary" id="contact-driver">Contact Driver</button>
+                    <button class="btn secondary" id="cancel-order">Cancel Order</button>
+                </div>
+            </div>
+            
+            <!-- Manual tracking removed per requirements -->
+        </div>
+    </div>
+</section>
+
+<script src="{{ url_for('static', filename='js/tracking.js') }}"></script>
+<style>
+/* Dark green and gold theme */
+:root {
+    --dark-green: #0a3d2f;
+    --light-green: #146b52;
+    --gold: #d4af37;
+    --light-gold: #e6c35e;
+    --bg: #f7f8f8;
+    --card: #ffffff;
+}
+
+.tracking-hero.minimal {
+    background: linear-gradient(90deg, var(--dark-green), #0c5440);
+    color: #fff;
+    padding: 24px 0;
+}
+.tracking-hero .hero-content h2 { margin: 0; }
+.tracking-hero .hero-content p { margin: 6px 0 0 0; opacity: .9; }
+
+.tracking-section { padding: 24px 0; }
+.tracking-container { max-width: 980px; margin: 0 auto; }
+
+.card-ui {
+    background: var(--card);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(10, 61, 47, 0.15);
+    padding: 20px;
+}
+
+.tracking-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.tracking-header .order-id { color: var(--dark-green); font-weight: 700; }
+.tracking-header .order-date { color: #666; font-size: .95rem; }
+
+.tracking-steps-container { position: relative; padding: 10px 0 24px; }
+.tracking-steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.step { text-align: center; }
+.step-icon { width: 34px; height: 34px; margin: 0 auto 6px; border-radius: 50%; background: #eef3f1; color: var(--dark-green); display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.step-label { font-weight: 600; color: #333; font-size: .95rem; }
+.step-date { color: #888; font-size: .85rem; margin-top: 2px; }
+
+.progress-line { position: absolute; left: 8%; right: 8%; bottom: 12px; height: 6px; background: #eef3f1; border-radius: 999px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--light-gold)); width: 0; transition: width .4s ease; }
+
+.tracking-status h4, .tracking-order-items h4, .meal-quality-info h4, .driver-info h4 { color: var(--dark-green); }
+.status-badge { display: inline-block; padding: 6px 12px; border-radius: 999px; background: var(--gold); color: var(--dark-green); font-weight: 700; }
+.estimated-time { color: #555; }
+
+/* New vertical timeline styles */
+.top-summary { display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid #eee; margin-bottom: 14px; }
+.summary-item { text-align: left; }
+.summary-label { color: #667; font-size: .85rem; }
+.summary-value { color: var(--dark-green); font-weight: 800; }
+
+.v-timeline { position: relative; padding-left: 40px; margin-top: 16px; }
+.v-line { position: absolute; left: 20px; top: 0; bottom: 0; width: 3px; background: linear-gradient(var(--dark-green), #0c5440); border-radius: 2px; }
+.v-line-fill { position: absolute; left: 0; top: 0; width: 100%; height: 0; background: var(--gold); box-shadow: 0 0 8px rgba(212,175,55,0.5); }
+.v-step { position: relative; margin: 20px 0; }
+.v-dot { position: absolute; left: 12px; top: 6px; width: 16px; height: 16px; background: var(--gold); border: 3px solid var(--dark-green); border-radius: 50%; box-shadow: 0 0 0 2px #fff; }
+.v-content { background: #fff; padding: 6px 10px; border-radius: 8px; }
+.v-title { font-weight: 700; color: #333; }
+.v-title.active { color: #0a52bd; }
+.v-title.muted { color: #b6b6b6; }
+.v-desc { color: #666; font-size: .95rem; }
+.v-time { color: #999; font-size: .85rem; margin-top: 2px; }
+.v-row { display: flex; align-items: center; gap: 14px; }
+.v-icon { width: 40px; display: flex; align-items: center; justify-content: center; }
+
+.items-list .item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #eee; }
+.order-total { display: flex; justify-content: space-between; font-weight: 700; color: var(--dark-green); margin-top: 8px; }
+
+.driver-details { display: flex; align-items: center; gap: 12px; }
+.driver-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--dark-green); color: var(--gold); display: flex; align-items: center; justify-content: center; font-weight: 800; }
+.map-controls .btn.secondary { background: var(--dark-green); color: #fff; border: none; }
+
+.btn { background: var(--dark-green); color: #fff; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; }
+.btn.secondary { background: var(--gold); color: var(--dark-green); }
+.btn:hover { filter: brightness(1.05); }
+
+@media (max-width: 768px) {
+  .tracking-steps { grid-template-columns: repeat(3, 1fr); row-gap: 10px; }
+}
+</style>
+{% endblock %}
